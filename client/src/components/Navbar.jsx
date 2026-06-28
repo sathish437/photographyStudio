@@ -56,8 +56,8 @@ export default function Navbar({ activeSection }) {
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       className={`sticky top-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-[#F7F8F5]/85 backdrop-blur-md border-b border-[#2F4F2F]/10 shadow-sm"
-          : "bg-transparent border-b border-transparent"
+          ? "bg-[#F7F8F5]/90 backdrop-blur-md border-b border-[#2F4F2F]/10 shadow-sm"
+          : "bg-gradient-to-b from-[#0D1409]/70 to-transparent border-b border-transparent backdrop-blur-[2px]"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -87,8 +87,8 @@ export default function Navbar({ activeSection }) {
                 onClick={(e) => handleNavClick(e, item.id)}
                 className={`relative text-xs uppercase tracking-[0.2em] font-medium transition-colors duration-300 py-2 ${
                   isActive
-                    ? isScrolled ? "text-[#2F4F2F] font-bold" : "text-[#7A9E3A] font-bold"
-                    : isScrolled ? "text-neutral-500 hover:text-[#2F4F2F]" : "text-white/70 hover:text-white"
+                    ? isScrolled ? "text-[#2F4F2F] font-bold" : "text-white font-bold"
+                    : isScrolled ? "text-neutral-500 hover:text-[#2F4F2F]" : "text-white/80 hover:text-white"
                 }`}
               >
                 {item.label}
@@ -96,7 +96,7 @@ export default function Navbar({ activeSection }) {
                   <motion.span
                     layoutId="activeNavIndicator"
                     className={`absolute bottom-0 left-0 w-full h-[1.5px] ${
-                      isScrolled ? "bg-[#2F4F2F]" : "bg-[#7A9E3A]"
+                      isScrolled ? "bg-[#2F4F2F]" : "bg-white"
                     }`}
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
