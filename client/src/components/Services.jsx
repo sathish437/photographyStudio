@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { services } from "../data/mockData";
 
-export default function Services() {
+export default function Services({ services = [] }) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

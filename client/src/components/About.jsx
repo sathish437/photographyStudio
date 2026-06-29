@@ -21,7 +21,7 @@ export default function About() {
   };
 
   return (
-    <section id="about" className="py-14 bg-[#F7F8F5] border-b border-neutral-200/30 overflow-hidden">
+    <section id="about" className="py-14 bg-[#F7F8F1] border-b border-neutral-200/30 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}
@@ -41,7 +41,7 @@ export default function About() {
             </h2>
           </div>
           <p className="text-xs text-neutral-500 font-medium max-w-sm mt-4 md:mt-0 tracking-wide font-sans">
-            Capturing the organic textures of light, space, and human connections since 2018.
+            Capturing the organic textures of light, space, and human connections since 2016.
           </p>
         </motion.div>
 

@@ -24,7 +24,7 @@ export default function Footer({ contactInfo }) {
               <img
                 src={logo}
                 alt="Aravinth Photography Logo"
-                className="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
+                className="h-10 w-10 rounded-full bg-white object-cover p-1 border border-neutral-200/50 shadow-sm transition-opacity group-hover:opacity-85"
               />
             </a>
             <div className="space-y-0.5">

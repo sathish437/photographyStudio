@@ -56,7 +56,7 @@ export default function Contact({ contactInfo }) {
   ];
 
   return (
-    <section id="contact" className="py-14 bg-white border-b border-neutral-100 overflow-hidden">
+    <section id="contact" className="py-14 bg-[#F7F8F1] border-b border-neutral-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Two-Column Contact Split Layout */}
