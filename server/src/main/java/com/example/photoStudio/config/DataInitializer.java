@@ -58,9 +58,24 @@ public class DataInitializer implements CommandLineRunner {
                     .instagram("https://www.instagram.com/kutty_photography_official")
                     .youtube("")
                     .address("12, Olive Grove Avenue, Near Art District, Chennai, Tamil Nadu - 600018")
+                    .addresses(java.util.List.of("12, Olive Grove Avenue, Near Art District, Chennai, Tamil Nadu - 600018"))
                     .build();
             contactRepository.save(contact);
             log.info("Default contact info seeded.");
+        } else {
+            // Migrate single address to addresses list if list is empty
+            Contact contact = contactRepository.findAll().get(0);
+            if (contact.getAddresses() == null || contact.getAddresses().isEmpty()) {
+                java.util.List<String> addressesList = new java.util.ArrayList<>();
+                if (contact.getAddress() != null && !contact.getAddress().trim().isEmpty()) {
+                    addressesList.add(contact.getAddress());
+                } else {
+                    addressesList.add("12, Olive Grove Avenue, Near Art District, Chennai, Tamil Nadu - 600018");
+                }
+                contact.setAddresses(addressesList);
+                contactRepository.save(contact);
+                log.info("Migrated legacy address string to addresses element list.");
+            }
         }
 
         // Seed default services if table is empty or contains null imagePath entries

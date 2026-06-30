@@ -144,7 +144,12 @@ export const contactInfo = {
   whatsapp: "9500379678",
   email: "kuttydigital.tmg@gmail.com",
   instagram: "https://www.instagram.com/kutty_photography_official",
-  address: "12, Olive Grove Avenue, Near Art District, Chennai, Tamil Nadu - 600018"
+  youtube: "https://www.youtube.com/@aravinthphotography",
+  address: "12, Olive Grove Avenue, Near Art District, Chennai, Tamil Nadu - 600018",
+  addresses: [
+    "12, Olive Grove Avenue, Near Art District, Chennai, Tamil Nadu - 600018",
+    "45, Golden Beach Boulevard, ECR, Chennai, Tamil Nadu - 600041"
+  ]
 };
 
 export const adminProfile = {

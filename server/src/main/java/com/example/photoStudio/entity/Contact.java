@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "contacts")
@@ -36,6 +37,11 @@ public class Contact {
 
     @Column(columnDefinition = "TEXT")
     private String address;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "contact_addresses", joinColumns = @JoinColumn(name = "contact_id"))
+    @Column(name = "address", columnDefinition = "TEXT")
+    private List<String> addresses;
 
     @UpdateTimestamp
     @Column(nullable = false)

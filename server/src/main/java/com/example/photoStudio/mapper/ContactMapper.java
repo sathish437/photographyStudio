@@ -17,6 +17,7 @@ public class ContactMapper {
                 .instagram(entity.getInstagram())
                 .youtube(entity.getYoutube())
                 .address(entity.getAddress())
+                .addresses(entity.getAddresses())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
     }
@@ -28,5 +29,6 @@ public class ContactMapper {
         entity.setInstagram(dto.getInstagram());
         entity.setYoutube(dto.getYoutube());
         entity.setAddress(dto.getAddress());
+        entity.setAddresses(dto.getAddresses());
     }
 }

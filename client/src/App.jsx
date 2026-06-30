@@ -82,7 +82,9 @@ function LandingPage() {
     whatsapp: "",
     email: "",
     instagram: "",
-    address: ""
+    youtube: "",
+    address: "",
+    addresses: []
   };
 
   const activeContact = contactInfo || fallbackContact;
