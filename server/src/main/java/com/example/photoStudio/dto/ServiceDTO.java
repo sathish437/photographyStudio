@@ -1,6 +1,5 @@
 package com.example.photoStudio.dto;
 
-import com.example.photoStudio.entity.ImageType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -21,13 +20,9 @@ public class ServiceDTO {
     @NotBlank(message = "Description is required")
     private String description;
 
-    private ImageType imageType;
-
-    private String imageName;
-
-    private String imagePath;
-
     private String imageUrl;
+
+    private String imagePublicId;
 
     private LocalDateTime createdAt;
 

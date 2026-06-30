@@ -3,7 +3,6 @@ package com.example.photoStudio.config;
 import com.example.photoStudio.entity.Admin;
 import com.example.photoStudio.entity.Contact;
 import com.example.photoStudio.entity.GalleryItem;
-import com.example.photoStudio.entity.ImageType;
 import com.example.photoStudio.entity.ServiceItem;
 import com.example.photoStudio.repository.AdminRepository;
 import com.example.photoStudio.repository.ContactRepository;
@@ -11,7 +10,6 @@ import com.example.photoStudio.repository.GalleryRepository;
 import com.example.photoStudio.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,18 +24,9 @@ public class DataInitializer implements CommandLineRunner {
     private final ServiceRepository serviceRepository;
     private final GalleryRepository galleryRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) {
-        // Clean up legacy services table columns for schema migration
-        try {
-            jdbcTemplate.execute("ALTER TABLE services DROP COLUMN IF EXISTS image_url");
-            log.info("Altered services table: dropped legacy image_url column.");
-        } catch (Exception e) {
-            log.warn("Could not drop legacy image_url column: {}", e.getMessage());
-        }
-
         // Seed default admin if none exists
         if (!adminRepository.existsByUsername("admin")) {
             Admin admin = Admin.builder()
@@ -78,11 +67,11 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
 
-        // Seed default services if table is empty or contains null imagePath entries
+        // Seed default services if table is empty or contains null imageUrl entries
         boolean needsServiceSeed = serviceRepository.count() == 0;
         if (!needsServiceSeed) {
             needsServiceSeed = serviceRepository.findAll().stream()
-                    .anyMatch(item -> item.getImagePath() == null || item.getImagePath().trim().isEmpty());
+                    .anyMatch(item -> item.getImageUrl() == null || item.getImageUrl().trim().isEmpty());
             if (needsServiceSeed) {
                 log.info("Legacy/null schema entries detected in services table. Clearing table to re-seed.");
                 serviceRepository.deleteAll();
@@ -93,46 +82,41 @@ public class DataInitializer implements CommandLineRunner {
             serviceRepository.save(ServiceItem.builder()
                     .title("Wedding Photography")
                     .description("Documenting your sacred promises and grand celebrations with an elegant, fine-art editorial perspective.")
-                    .imageType(ImageType.URL)
-                    .imageName(null)
-                    .imagePath("https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop")
+                    .imageUrl("https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop")
+                    .imagePublicId(null)
                     .build());
             serviceRepository.save(ServiceItem.builder()
                     .title("Pre Wedding Photography")
                     .description("Capturing organic romance, soft frames, and candid emotions in dreamy golden hour locations.")
-                    .imageType(ImageType.URL)
-                    .imageName(null)
-                    .imagePath("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop")
+                    .imageUrl("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop")
+                    .imagePublicId(null)
                     .build());
             serviceRepository.save(ServiceItem.builder()
                     .title("Birthday Photography")
                     .description("Bright, energetic candid shots highlighting joy, laughter, and milestones of your loved ones.")
-                    .imageType(ImageType.URL)
-                    .imageName(null)
-                    .imagePath("https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=800&auto=format&fit=crop")
+                    .imageUrl("https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=800&auto=format&fit=crop")
+                    .imagePublicId(null)
                     .build());
             serviceRepository.save(ServiceItem.builder()
                     .title("Baby Photography")
                     .description("Artistic, gentle frames preserving the pure, sweet milestones of your baby's earliest chapters.")
-                    .imageType(ImageType.URL)
-                    .imageName(null)
-                    .imagePath("https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=800&auto=format&fit=crop")
+                    .imageUrl("https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=800&auto=format&fit=crop")
+                    .imagePublicId(null)
                     .build());
             serviceRepository.save(ServiceItem.builder()
                     .title("Event Photography")
                     .description("Professional coverage for corporate summits, visual galas, and high-profile private celebrations.")
-                    .imageType(ImageType.URL)
-                    .imageName(null)
-                    .imagePath("https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop")
+                    .imageUrl("https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop")
+                    .imagePublicId(null)
                     .build());
             log.info("Default services seeded (5 items).");
         }
 
-        // Seed default gallery if table is empty or contains null image_path
+        // Seed default gallery if table is empty or contains null image_url
         boolean needsGallerySeed = galleryRepository.count() == 0;
         if (!needsGallerySeed) {
             needsGallerySeed = galleryRepository.findAll().stream()
-                    .anyMatch(item -> item.getImagePath() == null || item.getImagePath().trim().isEmpty());
+                    .anyMatch(item -> item.getImageUrl() == null || item.getImageUrl().trim().isEmpty());
             if (needsGallerySeed) {
                 log.info("Legacy/null schema entries detected in gallery table. Clearing table to re-seed.");
                 galleryRepository.deleteAll();
@@ -157,9 +141,8 @@ public class DataInitializer implements CommandLineRunner {
         galleryRepository.save(GalleryItem.builder()
                 .title(title)
                 .category(category)
-                .imageType(ImageType.URL)
-                .imageName(null)
-                .imagePath(url)
+                .imageUrl(url)
+                .imagePublicId(null)
                 .description(description)
                 .build());
     }

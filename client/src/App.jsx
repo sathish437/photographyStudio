@@ -30,9 +30,7 @@ function LandingPage() {
         // Map backend fields to match Gallery component expectations
         const mapped = res.data.map((item) => ({
           id: item.id,
-          url: item.imagePath && (item.imagePath.startsWith("http://") || item.imagePath.startsWith("https://"))
-            ? item.imagePath
-            : `${BASE_URL}${item.imagePath}`,
+          url: item.imageUrl,
           title: item.title,
           category: item.category,
           albumName: item.description || "",

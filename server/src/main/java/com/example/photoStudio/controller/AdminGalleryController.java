@@ -25,12 +25,11 @@ public class AdminGalleryController {
     @PostMapping
     public ResponseEntity<GalleryDTO> create(
             @RequestParam("title") String title,
-            @RequestParam(value = "category", required = false) String category,
+            @RequestParam("category") String category,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "image", required = false) MultipartFile image,
-            @RequestParam(value = "imageUrl", required = false) String imageUrl) {
+            @RequestParam("image") MultipartFile image) {
 
-        GalleryDTO created = galleryService.create(title, category, description, image, imageUrl);
+        GalleryDTO created = galleryService.create(title, category, description, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -38,12 +37,11 @@ public class AdminGalleryController {
     public ResponseEntity<GalleryDTO> update(
             @PathVariable Long id,
             @RequestParam("title") String title,
-            @RequestParam(value = "category", required = false) String category,
+            @RequestParam("category") String category,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "image", required = false) MultipartFile image,
-            @RequestParam(value = "imageUrl", required = false) String imageUrl) {
+            @RequestParam(value = "image", required = false) MultipartFile image) {
 
-        GalleryDTO updated = galleryService.update(id, title, category, description, image, imageUrl);
+        GalleryDTO updated = galleryService.update(id, title, category, description, image);
         return ResponseEntity.ok(updated);
     }
 

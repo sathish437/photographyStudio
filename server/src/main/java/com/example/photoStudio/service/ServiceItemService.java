@@ -1,7 +1,6 @@
 package com.example.photoStudio.service;
 
 import com.example.photoStudio.dto.ServiceDTO;
-import com.example.photoStudio.entity.ImageType;
 import com.example.photoStudio.entity.ServiceItem;
 import com.example.photoStudio.exception.InvalidFileException;
 import com.example.photoStudio.exception.ResourceNotFoundException;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class ServiceItemService {
 
     private final ServiceRepository serviceRepository;
-    private final FileStorageService fileStorageService;
+    private final CloudinaryService cloudinaryService;
 
     public List<ServiceDTO> getAll() {
         return serviceRepository.findAll()
@@ -37,72 +37,44 @@ public class ServiceItemService {
     }
 
     @Transactional
-    public ServiceDTO create(String title, String description, MultipartFile image, String imageUrl) {
-        boolean hasImage = image != null && !image.isEmpty();
-        boolean hasUrl = imageUrl != null && !imageUrl.trim().isEmpty();
-
-        if (hasImage && hasUrl) {
-            throw new InvalidFileException("Please provide either an uploaded image or an image URL, but not both.");
-        }
-        if (!hasImage && !hasUrl) {
-            throw new InvalidFileException("Please provide either an uploaded image or an image URL, but not both.");
+    public ServiceDTO create(String title, String description, MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new InvalidFileException("Image file is required.");
         }
 
-        ServiceItem.ServiceItemBuilder builder = ServiceItem.builder()
+        Map<?, ?> uploadResult = cloudinaryService.upload(image);
+        String imageUrl = cloudinaryService.getImageUrl(uploadResult);
+        String publicId = cloudinaryService.getPublicId(uploadResult);
+
+        ServiceItem saved = serviceRepository.save(ServiceItem.builder()
                 .title(title)
-                .description(description);
-
-        if (hasImage) {
-            String path = fileStorageService.storeFile(image, "services");
-            String name = path.substring(path.lastIndexOf('/') + 1);
-            builder.imageType(ImageType.LOCAL)
-                    .imageName(name)
-                    .imagePath(path);
-        } else {
-            validateUrl(imageUrl);
-            builder.imageType(ImageType.URL)
-                    .imageName(null)
-                    .imagePath(imageUrl.trim());
-        }
-
-        ServiceItem saved = serviceRepository.save(builder.build());
+                .description(description)
+                .imageUrl(imageUrl)
+                .imagePublicId(publicId)
+                .build());
         return ServiceMapper.toDTO(saved);
     }
 
     @Transactional
-    public ServiceDTO update(Long id, String title, String description, MultipartFile image, String imageUrl) {
+    public ServiceDTO update(Long id, String title, String description, MultipartFile image) {
         ServiceItem item = serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service", id));
-
-        boolean hasImage = image != null && !image.isEmpty();
-        boolean hasUrl = imageUrl != null && !imageUrl.trim().isEmpty();
-
-        if (hasImage && hasUrl) {
-            throw new InvalidFileException("Please provide either an uploaded image or an image URL, but not both.");
-        }
 
         item.setTitle(title);
         item.setDescription(description);
 
-        if (hasImage) {
-            // Delete old file if it was LOCAL
-            if (item.getImageType() == ImageType.LOCAL && item.getImagePath() != null) {
-                fileStorageService.deleteFile(item.getImagePath());
+        if (image != null && !image.isEmpty()) {
+            // Delete old Cloudinary image using publicId if exists
+            if (item.getImagePublicId() != null && !item.getImagePublicId().isEmpty()) {
+                cloudinaryService.delete(item.getImagePublicId());
             }
-            String path = fileStorageService.storeFile(image, "services");
-            String name = path.substring(path.lastIndexOf('/') + 1);
-            item.setImageType(ImageType.LOCAL);
-            item.setImageName(name);
-            item.setImagePath(path);
-        } else if (hasUrl) {
-            validateUrl(imageUrl);
-            // Delete old file if it was LOCAL
-            if (item.getImageType() == ImageType.LOCAL && item.getImagePath() != null) {
-                fileStorageService.deleteFile(item.getImagePath());
-            }
-            item.setImageType(ImageType.URL);
-            item.setImageName(null);
-            item.setImagePath(imageUrl.trim());
+            // Upload new image
+            Map<?, ?> uploadResult = cloudinaryService.upload(image);
+            String imageUrl = cloudinaryService.getImageUrl(uploadResult);
+            String publicId = cloudinaryService.getPublicId(uploadResult);
+
+            item.setImageUrl(imageUrl);
+            item.setImagePublicId(publicId);
         }
 
         ServiceItem updated = serviceRepository.save(item);
@@ -114,25 +86,11 @@ public class ServiceItemService {
         ServiceItem item = serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service", id));
 
-        // Delete physical file if type is LOCAL
-        if (item.getImageType() == ImageType.LOCAL && item.getImagePath() != null) {
-            fileStorageService.deleteFile(item.getImagePath());
+        // Delete from Cloudinary if exists
+        if (item.getImagePublicId() != null && !item.getImagePublicId().isEmpty()) {
+            cloudinaryService.delete(item.getImagePublicId());
         }
 
         serviceRepository.delete(item);
-    }
-
-    private void validateUrl(String url) {
-        if (url == null || url.trim().isEmpty()) {
-            throw new InvalidFileException("URL is invalid or empty");
-        }
-        try {
-            java.net.URI uri = java.net.URI.create(url);
-            if (uri.getScheme() == null || (!uri.getScheme().equalsIgnoreCase("http") && !uri.getScheme().equalsIgnoreCase("https"))) {
-                throw new InvalidFileException("URL must use HTTP or HTTPS protocol");
-            }
-        } catch (Exception e) {
-            throw new InvalidFileException("Please provide a valid image URL");
-        }
     }
 }

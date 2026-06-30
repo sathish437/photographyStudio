@@ -26,15 +26,11 @@ public class GalleryItem {
     @Column(length = 100)
     private String category;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ImageType imageType;
+    @Column(length = 1000)
+    private String imageUrl;
 
-    @Column(length = 200)
-    private String imageName;
-
-    @Column(length = 500)
-    private String imagePath;
+    @Column(length = 255)
+    private String imagePublicId;
 
     @Column(columnDefinition = "TEXT")
     private String description;

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  LogOut, Camera, Image, Phone, Plus, Pencil, Trash2, Save, X,
-  LayoutDashboard, ChevronRight, Eye, Youtube, RotateCcw, MessageCircle, Mail, Instagram, MapPin
+  LogOut, Camera, Image, Phone, Plus, Pencil, Trash2, Save, X, Menu,
+  LayoutDashboard, ChevronRight, Eye, Youtube, RotateCcw, MessageCircle, Mail, Instagram, MapPin,
+  CheckCircle2, AlertTriangle, AlertCircle, Info
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { authApi, adminServicesApi, adminGalleryApi, adminContactApi, BASE_URL } from "../api/api";
 
 // =====================================================
@@ -14,6 +16,17 @@ export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminUser, setAdminUser] = useState(null);
   const [activeTab, setActiveTab] = useState("services");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (type, message) => {
+    const id = Date.now() + Math.random().toString(36).substring(2, 9);
+    setNotifications((prev) => [...prev, { id, type, message }]);
+  };
+
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
@@ -35,76 +48,220 @@ export default function AdminPanel() {
     return <LoginPage onLogin={(user) => { setIsLoggedIn(true); setAdminUser(user); }} />;
   }
 
-  return (
-    <div className="min-h-screen bg-[#0F0F0F] text-white font-sans">
-      {/* Top Header Bar */}
-      <header className="sticky top-0 z-50 bg-[#0F0F0F]/95 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-[#2F4F2F] to-[#5A8A5A] rounded-xl flex items-center justify-center">
-              <LayoutDashboard size={18} />
-            </div>
-            <div>
-              <h1 className="text-sm font-bold tracking-wide">CMS Dashboard</h1>
-              <p className="text-[10px] text-neutral-500 uppercase tracking-widest">Aravinth Photography</p>
-            </div>
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Brand logo */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-9 h-9 bg-gradient-to-br from-[#2F4F2F] to-[#5A8A5A] rounded-xl flex items-center justify-center shadow-lg shadow-[#2F4F2F]/20">
+          <LayoutDashboard size={18} />
+        </div>
+        <div>
+          <h1 className="text-sm font-bold tracking-wide">CMS Admin</h1>
+          <p className="text-[10px] text-neutral-500 uppercase tracking-widest">Aravinth Studio</p>
+        </div>
+      </div>
+
+      {/* Navigation Links */}
+      <div className="space-y-1">
+        {[
+          { key: "services", label: "Services", icon: Camera },
+          { key: "gallery", label: "Gallery", icon: Image },
+          { key: "contact", label: "Contact", icon: Phone },
+        ].map(({ key, label, icon: Icon }) => (
+          <button
+            key={key}
+            onClick={() => {
+              setActiveTab(key);
+              setIsMobileMenuOpen(false);
+            }}
+            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-xs font-semibold uppercase tracking-widest transition-all ${
+              activeTab === key
+                ? "bg-[#2F4F2F] text-white shadow-lg shadow-[#2F4F2F]/20"
+                : "text-neutral-500 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Icon size={14} />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Footer Profile & Logout */}
+      <div className="mt-auto pt-6 border-t border-white/5">
+        <div className="flex items-center justify-between gap-2 px-3 py-2.5 bg-white/5 rounded-2xl mb-3">
+          <div className="flex items-center gap-2 truncate">
+            <div className="w-2 h-2 rounded-full bg-[#7A9E3A] flex-shrink-0" />
+            <span className="text-[10px] uppercase tracking-widest text-neutral-400 truncate">{adminUser?.username}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-neutral-400 hover:text-[#7A9E3A] transition-colors"
-            >
-              <Eye size={12} />
-              View Site
-            </a>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-[#7A9E3A]" />
-              <span className="text-[10px] uppercase tracking-widest text-neutral-400">{adminUser?.username}</span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-xl bg-white/5 hover:bg-red-500/20 hover:text-red-400 transition-all"
-              title="Logout"
-            >
-              <LogOut size={16} />
-            </button>
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-neutral-500 hover:text-white transition-colors"
+          >
+            <Eye size={10} /> Site
+          </a>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 justify-center py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all"
+        >
+          <LogOut size={14} /> Log Out
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#0F0F0F] text-white font-sans flex flex-col md:flex-row">
+      {/* Desktop Sidebar (hidden on mobile) */}
+      <aside className="hidden md:block w-64 bg-[#0A0A0A] border-r border-white/5 p-6 h-screen sticky top-0 flex-shrink-0">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Top Header (hidden on desktop) */}
+      <header className="md:hidden sticky top-0 z-40 bg-[#0F0F0F]/95 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#2F4F2F] to-[#5A8A5A] rounded-lg flex items-center justify-center">
+            <LayoutDashboard size={16} />
+          </div>
+          <div>
+            <h1 className="text-xs font-bold tracking-wide">CMS Admin</h1>
+            <p className="text-[8px] text-neutral-500 uppercase tracking-widest">Aravinth Studio</p>
           </div>
         </div>
+        
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-all text-neutral-400 hover:text-white"
+        >
+          <Menu size={18} />
+        </button>
       </header>
 
-      {/* Tab Navigation */}
-      <nav className="max-w-7xl mx-auto px-6 pt-6">
-        <div className="flex gap-1 bg-white/5 p-1 rounded-2xl w-fit">
-          {[
-            { key: "services", label: "Services", icon: Camera },
-            { key: "gallery", label: "Gallery", icon: Image },
-            { key: "contact", label: "Contact", icon: Phone },
-          ].map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-widest transition-all ${
-                activeTab === key
-                  ? "bg-[#2F4F2F] text-white shadow-lg"
-                  : "text-neutral-500 hover:text-white hover:bg-white/5"
-              }`}
+      {/* Mobile Menu Drawer (Framer Motion) */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/80 z-40 md:hidden"
+            />
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-72 bg-[#0A0A0A] z-50 p-6 flex flex-col md:hidden"
             >
-              <Icon size={14} />
-              {label}
-            </button>
-          ))}
-        </div>
-      </nav>
+              {/* Close Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="absolute top-6 right-6 p-1.5 rounded-lg bg-white/5 text-neutral-500 hover:text-white transition-all"
+              >
+                <X size={16} />
+              </button>
+              <SidebarContent />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
-      {/* Content Area */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {activeTab === "services" && <ServicesManager />}
-        {activeTab === "gallery" && <GalleryManager />}
-        {activeTab === "contact" && <ContactManager />}
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-8 py-6 md:py-8 overflow-x-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.2 }}
+          >
+            {activeTab === "services" && <ServicesManager onNotify={addNotification} />}
+            {activeTab === "gallery" && <GalleryManager onNotify={addNotification} />}
+            {activeTab === "contact" && <ContactManager onNotify={addNotification} />}
+          </motion.div>
+        </AnimatePresence>
       </main>
+
+      {/* Toast Notification Container */}
+      <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+        <AnimatePresence>
+          {notifications.map((n) => (
+            <NotificationCard
+              key={n.id}
+              type={n.type}
+              message={n.message}
+              onClose={() => removeNotification(n.id)}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
     </div>
+  );
+}
+
+function NotificationCard({ type, message, onClose }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const styleMap = {
+    success: {
+      bg: "bg-emerald-950/90 border-emerald-500/30 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.1)]",
+      icon: <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />,
+      accent: "bg-emerald-500",
+    },
+    error: {
+      bg: "bg-red-950/90 border-red-500/30 text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.1)]",
+      icon: <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />,
+      accent: "bg-red-500",
+    },
+    warning: {
+      bg: "bg-amber-950/90 border-amber-500/30 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.1)]",
+      icon: <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />,
+      accent: "bg-amber-500",
+    },
+    info: {
+      bg: "bg-blue-950/90 border-blue-500/30 text-blue-300 shadow-[0_0_20px_rgba(59,130,246,0.1)]",
+      icon: <Info className="w-4 h-4 text-blue-400 flex-shrink-0" />,
+      accent: "bg-blue-500",
+    },
+  };
+
+  const style = styleMap[type] || styleMap.info;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 50, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 50, scale: 0.9 }}
+      transition={{ type: "spring", damping: 20, stiffness: 350 }}
+      className={`pointer-events-auto flex items-center justify-between p-4 rounded-2xl border backdrop-blur-xl shadow-2xl relative overflow-hidden ${style.bg}`}
+    >
+      {/* Dynamic border accent bar */}
+      <div className={`absolute top-0 bottom-0 left-0 w-1 ${style.accent}`} />
+      
+      <div className="flex items-center gap-3 pl-1 flex-1">
+        {style.icon}
+        <span className="text-xs font-semibold tracking-wide leading-relaxed">{message}</span>
+      </div>
+
+      <button
+        onClick={onClose}
+        className="p-1 rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white transition-all cursor-pointer ml-3 flex-shrink-0"
+      >
+        <X size={14} />
+      </button>
+    </motion.div>
   );
 }
 
@@ -202,7 +359,7 @@ function LoginPage({ onLogin }) {
 // SERVICES MANAGER
 // =====================================================
 
-function ServicesManager() {
+function ServicesManager({ onNotify }) {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
@@ -214,6 +371,7 @@ function ServicesManager() {
       setServices(res.data);
     } catch (err) {
       console.error("Failed to fetch services:", err);
+      onNotify("error", "Failed to fetch services list");
     } finally {
       setLoading(false);
     }
@@ -222,17 +380,20 @@ function ServicesManager() {
   useEffect(() => { fetchServices(); }, []);
 
   const handleSave = async (data) => {
+    onNotify("info", "Upload in progress...");
     try {
       if (editingItem) {
         await adminServicesApi.update(editingItem.id, data);
+        onNotify("success", "Service updated successfully.");
       } else {
         await adminServicesApi.create(data);
+        onNotify("success", "Service created successfully.");
       }
       setShowForm(false);
       setEditingItem(null);
       fetchServices();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to save service");
+      onNotify("error", err.response?.data?.message || "Failed to save service");
     }
   };
 
@@ -240,16 +401,17 @@ function ServicesManager() {
     if (!window.confirm("Delete this service?")) return;
     try {
       await adminServicesApi.delete(id);
+      onNotify("success", "Service deleted successfully.");
       fetchServices();
     } catch (err) {
-      alert("Failed to delete service");
+      onNotify("error", "Failed to delete service");
     }
   };
 
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div>
+    <div className="space-y-6">
       <SectionHeader
         title="Services"
         count={services.length}
@@ -258,52 +420,67 @@ function ServicesManager() {
 
       {showForm && (
         <FormCard
-          title={editingItem ? "Edit Service" : "Add New Service"}
+          id="service-form-card"
+          title="Service"
+          subtitle={editingItem ? "Update the selected item below." : "Enter details for the new service."}
+          isEditing={!!editingItem}
           onClose={() => { setShowForm(false); setEditingItem(null); }}
         >
           <ServiceForm
             initial={editingItem}
             onSave={handleSave}
             onCancel={() => { setShowForm(false); setEditingItem(null); }}
+            onNotify={onNotify}
           />
         </FormCard>
       )}
 
-      <div className="space-y-4 mt-6">
+      {/* Responsive Services Card Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {services.map((service) => (
-          <div
+          <motion.div
             key={service.id}
-            className="flex flex-col md:flex-row items-center justify-between p-5 bg-white/[0.03] border border-white/5 rounded-2xl hover:border-[#2F4F2F]/30 transition-all gap-4"
+            whileHover={{ y: -6 }}
+            transition={{ duration: 0.3 }}
+            className="group bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden hover:border-[#2F4F2F]/30 transition-all flex flex-col justify-between"
           >
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <div className="w-20 h-20 rounded-xl overflow-hidden border border-white/10 bg-neutral-900 flex-shrink-0">
+            <div>
+              {/* Image Banner */}
+              <div className="aspect-[16/10] w-full overflow-hidden bg-neutral-900 border-b border-white/5 relative">
                 <img
-                  src={service.imageUrl && (service.imageUrl.startsWith("http://") || service.imageUrl.startsWith("https://")) ? service.imageUrl : `${BASE_URL}${service.imageUrl}`}
+                  src={service.imageUrl}
                   alt={service.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=200&auto=format&fit=crop'; }}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=300&auto=format&fit=crop'; }}
                 />
               </div>
-              <div>
-                <h3 className="text-white font-semibold text-sm">{service.title}</h3>
-                <p className="text-neutral-500 text-xs mt-1 leading-relaxed line-clamp-2 md:line-clamp-1">{service.description}</p>
+
+              {/* Card Body */}
+              <div className="p-5 space-y-2">
+                <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-[#7A9E3A] transition-colors">{service.title}</h3>
+                <p className="text-neutral-400 text-xs leading-relaxed line-clamp-3">{service.description}</p>
               </div>
             </div>
-            <div className="flex gap-2 w-full md:w-auto justify-end">
+
+            {/* Actions */}
+            <div className="p-5 pt-0 flex gap-2 w-full">
               <button
-                onClick={() => { setEditingItem(service); setShowForm(true); }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-400 hover:text-white text-[10px] uppercase tracking-widest transition-all"
+                onClick={() => { 
+                  setEditingItem(service); 
+                  setShowForm(true); 
+                }}
+                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[10px] uppercase tracking-widest font-bold transition-all"
               >
-                <Pencil size={11} /> Edit
+                <Pencil size={12} /> Edit
               </button>
               <button
                 onClick={() => handleDelete(service.id)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] uppercase tracking-widest transition-all"
+                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] uppercase tracking-widest font-bold transition-all"
               >
-                <Trash2 size={11} /> Delete
+                <Trash2 size={12} /> Delete
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -312,38 +489,25 @@ function ServicesManager() {
   );
 }
 
-function ServiceForm({ initial, onSave, onCancel }) {
+function ServiceForm({ initial, onSave, onCancel, onNotify }) {
   const [title, setTitle] = useState(initial?.title || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(initial?.imageType === "URL" ? initial.imagePath : "");
-  const [previewUrl, setPreviewUrl] = useState(
-    initial?.imageUrl && (initial.imageUrl.startsWith("http://") || initial.imageUrl.startsWith("https://"))
-      ? initial.imageUrl
-      : initial?.imageUrl
-      ? `${BASE_URL}${initial.imageUrl}`
-      : ""
-  );
+  const [previewUrl, setPreviewUrl] = useState(initial?.imageUrl || "");
+  const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    if (firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, [initial]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const hasImage = !!imageFile;
-    const hasUrl = !!imageUrl.trim();
 
-    if (!initial) {
-      if (hasImage && hasUrl) {
-        alert("Please provide either an uploaded image or an image URL, but not both.");
-        return;
-      }
-      if (!hasImage && !hasUrl) {
-        alert("Please provide either an uploaded image or an image URL, but not both.");
-        return;
-      }
-    } else {
-      if (hasImage && hasUrl) {
-        alert("Please provide either an uploaded image or an image URL, but not both.");
-        return;
-      }
+    if (!initial && !imageFile) {
+      onNotify("warning", "Please select an image file to upload.");
+      return;
     }
 
     const formData = new FormData();
@@ -352,32 +516,20 @@ function ServiceForm({ initial, onSave, onCancel }) {
     if (imageFile) {
       formData.append("image", imageFile);
     }
-    if (imageUrl.trim()) {
-      formData.append("imageUrl", imageUrl.trim());
-    }
     onSave(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {initial && (
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <span className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">Current Image</span>
-          <div className="w-40 h-24 rounded-2xl overflow-hidden border border-white/10 bg-neutral-900">
-            <img src={previewUrl} alt="Current" className="w-full h-full object-cover" onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=300&auto=format&fit=crop'; }} />
-          </div>
-        </div>
-      )}
-
-      <FormField label="Title" value={title} onChange={setTitle} required />
-      <FormField label="Description" value={description} onChange={setDescription} isTextarea required />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <FormField ref={firstInputRef} label="Title" value={title} onChange={setTitle} required placeholder="e.g. Wedding Photography" />
+      <FormField label="Description" value={description} onChange={setDescription} isTextarea required placeholder="Enter service description..." />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        {/* Upload file */}
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">
-            Upload Image
-          </label>
+      {/* Upload Dropzone */}
+      <div>
+        <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2 font-semibold">
+          Service Image
+        </label>
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-dashed border-white/10 hover:border-[#2F4F2F]/30 transition-colors flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer min-h-[200px]">
           <input
             type="file"
             accept="image/*"
@@ -385,35 +537,31 @@ function ServiceForm({ initial, onSave, onCancel }) {
               const file = e.target.files[0];
               if (file) {
                 setImageFile(file);
-                setImageUrl(""); // clear URL field when choosing a file
+                setPreviewUrl(URL.createObjectURL(file));
               }
             }}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#2F4F2F] transition-colors"
+            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
           />
-        </div>
-
-        {/* Enter URL */}
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">
-            Image URL
-          </label>
-          <input
-            type="text"
-            value={imageUrl}
-            onChange={(e) => {
-              const val = e.target.value;
-              setImageUrl(val);
-              if (val.trim()) {
-                setImageFile(null); // clear file field when typing a URL
-              }
-            }}
-            placeholder="https://images.unsplash.com/..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors"
-          />
+          {previewUrl ? (
+            <div className="w-full relative aspect-[16/10] rounded-xl overflow-hidden border border-white/10">
+              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-xs font-semibold uppercase tracking-widest text-white z-20">
+                Change Image
+              </div>
+            </div>
+          ) : (
+            <div className="py-8 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 text-neutral-400 group-hover:text-white transition-colors">
+                <Camera size={20} />
+              </div>
+              <p className="text-xs font-bold text-neutral-300">Click or tap to upload image</p>
+              <p className="text-[9px] text-neutral-500 mt-1.5 uppercase tracking-wider">PNG, JPG, JPEG, WEBP up to 10MB</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <FormActions onCancel={onCancel} label={initial ? "Update" : "Create"} />
+      <FormActions onCancel={onCancel} label={initial ? "Update Service" : "Create Service"} />
     </form>
   );
 }
@@ -422,7 +570,7 @@ function ServiceForm({ initial, onSave, onCancel }) {
 // GALLERY MANAGER
 // =====================================================
 
-function GalleryManager() {
+function GalleryManager({ onNotify }) {
   const [gallery, setGallery] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
@@ -434,6 +582,7 @@ function GalleryManager() {
       setGallery(res.data);
     } catch (err) {
       console.error("Failed to fetch gallery:", err);
+      onNotify("error", "Failed to fetch gallery items");
     } finally {
       setLoading(false);
     }
@@ -442,17 +591,20 @@ function GalleryManager() {
   useEffect(() => { fetchGallery(); }, []);
 
   const handleSave = async (data) => {
+    onNotify("info", "Upload in progress...");
     try {
       if (editingItem) {
         await adminGalleryApi.update(editingItem.id, data);
+        onNotify("success", "Gallery item updated successfully.");
       } else {
         await adminGalleryApi.create(data);
+        onNotify("success", "Gallery image uploaded successfully.");
       }
       setShowForm(false);
       setEditingItem(null);
       fetchGallery();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to save gallery item");
+      onNotify("error", err.response?.data?.message || "Failed to save gallery item");
     }
   };
 
@@ -460,16 +612,17 @@ function GalleryManager() {
     if (!window.confirm("Delete this gallery item?")) return;
     try {
       await adminGalleryApi.delete(id);
+      onNotify("success", "Gallery item deleted successfully.");
       fetchGallery();
     } catch (err) {
-      alert("Failed to delete gallery item");
+      onNotify("error", "Failed to delete gallery item");
     }
   };
 
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div>
+    <div className="space-y-6">
       <SectionHeader
         title="Gallery"
         count={gallery.length}
@@ -478,55 +631,65 @@ function GalleryManager() {
 
       {showForm && (
         <FormCard
-          title={editingItem ? "Edit Gallery Item" : "Add Gallery Item"}
+          id="gallery-form-card"
+          title="Gallery Item"
+          subtitle={editingItem ? "Update the selected item below." : "Enter details for the new gallery item."}
+          isEditing={!!editingItem}
           onClose={() => { setShowForm(false); setEditingItem(null); }}
         >
           <GalleryForm
             initial={editingItem}
             onSave={handleSave}
             onCancel={() => { setShowForm(false); setEditingItem(null); }}
+            onNotify={onNotify}
           />
         </FormCard>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+      {/* Responsive Gallery Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {gallery.map((item) => (
-          <div
+          <motion.div
             key={item.id}
-            className="group relative bg-white/[0.03] border border-white/5 rounded-2xl overflow-hidden hover:border-[#2F4F2F]/30 transition-all flex flex-col justify-between"
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.3 }}
+            className="group relative bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden hover:border-[#2F4F2F]/30 transition-all flex flex-col justify-between"
           >
-            <div className="aspect-square w-full overflow-hidden bg-neutral-900 relative">
+            <div className="aspect-square w-full overflow-hidden bg-neutral-900 relative border-b border-white/5">
               <img
-                src={item.imagePath && (item.imagePath.startsWith("http://") || item.imagePath.startsWith("https://")) ? item.imagePath : `${BASE_URL}${item.imagePath}`}
+                src={item.imageUrl}
                 alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=200&auto=format&fit=crop'; }}
               />
-              <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm border border-white/10 text-[#7A9E3A] text-[9px] font-bold uppercase tracking-wider">
+              <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-white/10 text-[#7A9E3A] text-[9px] font-bold uppercase tracking-wider">
                 {item.category}
               </div>
             </div>
             <div className="p-4 flex-grow flex flex-col justify-between">
               <div>
-                <h3 className="text-white font-medium text-xs truncate">{item.title}</h3>
-                <p className="text-neutral-500 text-[10px] mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
+                <h3 className="text-white font-bold text-xs truncate group-hover:text-[#7A9E3A] transition-colors">{item.title}</h3>
+                <p className="text-neutral-500 text-[10px] mt-1 line-clamp-2 leading-relaxed">{item.description || "No description provided."}</p>
               </div>
               <div className="flex gap-2 mt-4">
                 <button
-                  onClick={() => { setEditingItem(item); setShowForm(true); }}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-400 hover:text-white text-[9px] uppercase tracking-wider transition-all"
+                  onClick={() => { 
+                    setEditingItem(item); 
+                    setShowForm(true); 
+                  }}
+                  className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[9px] uppercase tracking-wider font-bold transition-all"
                 >
-                  <Pencil size={10} /> Edit
+                  <Pencil size={11} /> Edit
                 </button>
                 <button
                   onClick={() => handleDelete(item.id)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[9px] uppercase tracking-wider transition-all"
+                  className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[9px] uppercase tracking-wider font-bold transition-all"
                 >
-                  <Trash2 size={10} /> Delete
+                  <Trash2 size={11} /> Delete
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -535,39 +698,26 @@ function GalleryManager() {
   );
 }
 
-function GalleryForm({ initial, onSave, onCancel }) {
+function GalleryForm({ initial, onSave, onCancel, onNotify }) {
   const [title, setTitle] = useState(initial?.title || "");
   const [category, setCategory] = useState(initial?.category || "");
   const [description, setDescription] = useState(initial?.description || "");
   const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(initial?.imageType === "URL" ? initial.imagePath : "");
-  const [previewUrl, setPreviewUrl] = useState(
-    initial?.imagePath && (initial.imagePath.startsWith("http://") || initial.imagePath.startsWith("https://"))
-      ? initial.imagePath
-      : initial?.imagePath
-      ? `${BASE_URL}${initial.imagePath}`
-      : ""
-  );
+  const [previewUrl, setPreviewUrl] = useState(initial?.imageUrl || "");
+  const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    if (firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, [initial]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const hasImage = !!imageFile;
-    const hasUrl = !!imageUrl.trim();
 
-    if (!initial) {
-      if (hasImage && hasUrl) {
-        alert("Please provide either an uploaded image or an image URL, but not both.");
-        return;
-      }
-      if (!hasImage && !hasUrl) {
-        alert("Please provide either an uploaded image or an image URL, but not both.");
-        return;
-      }
-    } else {
-      if (hasImage && hasUrl) {
-        alert("Please provide either an uploaded image or an image URL, but not both.");
-        return;
-      }
+    if (!initial && !imageFile) {
+      onNotify("warning", "Please select an image file to upload.");
+      return;
     }
 
     const formData = new FormData();
@@ -577,32 +727,20 @@ function GalleryForm({ initial, onSave, onCancel }) {
     if (imageFile) {
       formData.append("image", imageFile);
     }
-    if (imageUrl.trim()) {
-      formData.append("imageUrl", imageUrl.trim());
-    }
     onSave(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {initial && (
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <span className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">Current Image</span>
-          <div className="w-40 h-24 rounded-2xl overflow-hidden border border-white/10 bg-neutral-900">
-            <img src={previewUrl} alt="Current" className="w-full h-full object-cover" onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=300&auto=format&fit=crop'; }} />
-          </div>
-        </div>
-      )}
-
-      <FormField label="Title" value={title} onChange={setTitle} required />
-      <FormField label="Category" value={category} onChange={setCategory} placeholder="e.g. Wedding, Birthday" required />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <FormField ref={firstInputRef} label="Title" value={title} onChange={setTitle} required placeholder="e.g. The Sacred Vows" />
+      <FormField label="Category" value={category} onChange={setCategory} placeholder="e.g. Wedding, Pre Wedding, Portrait" required />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        {/* Upload file */}
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">
-            Upload Image
-          </label>
+      {/* Upload Dropzone */}
+      <div>
+        <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2 font-semibold">
+          Gallery Image
+        </label>
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-dashed border-white/10 hover:border-[#2F4F2F]/30 transition-colors flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer min-h-[200px]">
           <input
             type="file"
             accept="image/*"
@@ -610,36 +748,32 @@ function GalleryForm({ initial, onSave, onCancel }) {
               const file = e.target.files[0];
               if (file) {
                 setImageFile(file);
-                setImageUrl(""); // clear URL field when choosing a file
+                setPreviewUrl(URL.createObjectURL(file));
               }
             }}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#2F4F2F] transition-colors"
+            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
           />
-        </div>
-
-        {/* Enter URL */}
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">
-            Image URL
-          </label>
-          <input
-            type="text"
-            value={imageUrl}
-            onChange={(e) => {
-              const val = e.target.value;
-              setImageUrl(val);
-              if (val.trim()) {
-                setImageFile(null); // clear file field when typing a URL
-              }
-            }}
-            placeholder="https://images.unsplash.com/..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors"
-          />
+          {previewUrl ? (
+            <div className="w-full relative aspect-square max-w-[260px] rounded-xl overflow-hidden border border-white/10 mx-auto">
+              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-xs font-semibold uppercase tracking-widest text-white z-20">
+                Change Image
+              </div>
+            </div>
+          ) : (
+            <div className="py-8 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 text-neutral-400 group-hover:text-white transition-colors">
+                <Camera size={20} />
+              </div>
+              <p className="text-xs font-bold text-neutral-300">Click or tap to upload image</p>
+              <p className="text-[9px] text-neutral-500 mt-1.5 uppercase tracking-wider">PNG, JPG, JPEG, WEBP up to 10MB</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <FormField label="Description" value={description} onChange={setDescription} placeholder="Album name or description" />
-      <FormActions onCancel={onCancel} label={initial ? "Update" : "Create"} />
+      <FormField label="Description" value={description} onChange={setDescription} placeholder="Album name or image details..." />
+      <FormActions onCancel={onCancel} label={initial ? "Update Gallery Item" : "Create Gallery Item"} />
     </form>
   );
 }
@@ -696,7 +830,7 @@ function PreviewCard({ form }) {
   ].filter(item => item.value);
 
   return (
-    <div className="bg-gradient-to-br from-[#F7F8F1] to-[#EFF1E8] rounded-3xl p-8 border border-neutral-200/40 relative overflow-hidden shadow-2xl flex flex-col justify-between h-full min-h-[500px]">
+    <div className="bg-gradient-to-br from-[#F7F8F1] to-[#EFF1E8] rounded-3xl p-6 sm:p-8 border border-neutral-200/40 relative overflow-hidden shadow-2xl flex flex-col justify-between h-full min-h-[450px]">
       {/* Blurred decorative spots for luxury background styling */}
       <div className="w-48 h-48 rounded-full bg-[#2F4F2F]/5 blur-2xl absolute -top-10 -right-10 pointer-events-none" />
       <div className="w-48 h-48 rounded-full bg-[#2F4F2F]/5 blur-2xl absolute -bottom-10 -left-10 pointer-events-none" />
@@ -748,11 +882,12 @@ function PreviewCard({ form }) {
   );
 }
 
-function ContactManager() {
+function ContactManager({ onNotify }) {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const firstInputRef = useRef(null);
 
   const fetchContact = async () => {
     try {
@@ -767,6 +902,7 @@ function ContactManager() {
       }
     } catch (err) {
       console.error("Failed to fetch contact:", err);
+      onNotify("error", "Failed to fetch contact details");
     } finally {
       setLoading(false);
     }
@@ -775,6 +911,12 @@ function ContactManager() {
   useEffect(() => {
     fetchContact();
   }, []);
+
+  useEffect(() => {
+    if (!loading && firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, [loading]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -785,10 +927,10 @@ function ContactManager() {
       updatedForm.address = form.addresses && form.addresses.length > 0 ? form.addresses[0] : "";
       
       await adminContactApi.update(updatedForm.id, updatedForm);
-      alert("Contact information updated successfully!");
+      onNotify("success", "Contact information saved.");
       fetchContact();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update contact");
+      onNotify("error", err.response?.data?.message || "Failed to update contact");
     } finally {
       setSaving(false);
     }
@@ -801,6 +943,7 @@ function ContactManager() {
         contactData.addresses = contactData.address ? [contactData.address] : [];
       }
       setForm(contactData);
+      onNotify("info", "Changes reset to saved values.");
     }
   };
 
@@ -828,26 +971,27 @@ function ContactManager() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         {/* Left Side: Contact Information Form */}
-        <form onSubmit={handleSave} className="lg:col-span-6 space-y-6 bg-white/[0.02] border border-white/5 p-6 rounded-3xl flex flex-col justify-between">
+        <form onSubmit={handleSave} className="lg:col-span-6 space-y-6 bg-white/[0.02] border border-white/5 p-5 sm:p-6 rounded-3xl flex flex-col justify-between">
           <div className="space-y-5">
-            {fields.map(({ key, label, placeholder }) => (
+            {fields.map(({ key, label, placeholder }, idx) => (
               <div key={key}>
                 <label className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold block mb-2">
                   {label}
                 </label>
                 <input
+                  ref={idx === 0 ? firstInputRef : null}
                   type={key === "email" ? "email" : "text"}
                   value={form[key] || ""}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
                   placeholder={placeholder}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors"
                 />
               </div>
             ))}
 
             {/* Dynamic Address List Editor */}
             <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <label className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold block">
                   Studio Addresses
                 </label>
@@ -857,9 +1001,9 @@ function ContactManager() {
                     const currentAddresses = form.addresses ? [...form.addresses] : [];
                     setForm({ ...form, addresses: [...currentAddresses, ""] });
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-[9px] uppercase tracking-wider font-bold transition-all text-neutral-300 cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2.5 sm:px-3 sm:py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg text-xs sm:text-[9px] uppercase tracking-wider font-bold transition-all text-neutral-300 cursor-pointer"
                 >
-                  <Plus size={10} /> Add Address
+                  <Plus size={12} /> Add Address
                 </button>
               </div>
               
@@ -886,7 +1030,7 @@ function ContactManager() {
                           const newAddresses = form.addresses.filter((_, i) => i !== idx);
                           setForm({ ...form, addresses: newAddresses });
                         }}
-                        className="p-3.5 bg-red-950/20 hover:bg-red-900/40 border border-red-900/20 text-red-400 rounded-xl transition-all cursor-pointer mt-0.5"
+                        className="p-4 bg-red-950/20 hover:bg-red-900/40 border border-red-900/20 text-red-400 rounded-xl transition-all cursor-pointer mt-0.5 min-h-[44px] flex items-center justify-center"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -897,20 +1041,20 @@ function ContactManager() {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-6 mt-6 border-t border-white/5">
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 mt-6 border-t border-white/5">
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#2F4F2F] hover:bg-[#3F5F3F] disabled:opacity-50 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all text-white cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 px-5 py-3 bg-[#2F4F2F] hover:bg-[#3F5F3F] disabled:opacity-50 rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold transition-all text-white cursor-pointer shadow-lg shadow-[#2F4F2F]/10"
             >
-              <Save size={12} /> {saving ? "Saving..." : "Save Changes"}
+              <Save size={14} /> {saving ? "Saving..." : "Save Changes"}
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] uppercase tracking-widest font-bold text-neutral-400 transition-all cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 px-5 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold text-neutral-400 transition-all cursor-pointer"
             >
-              <RotateCcw size={12} /> Reset Changes
+              <RotateCcw size={14} /> Reset Changes
             </button>
           </div>
         </form>
@@ -930,14 +1074,14 @@ function ContactManager() {
 
 function SectionHeader({ title, count, onAdd }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-4">
       <div>
-        <h2 className="text-white font-bold text-lg tracking-wide">{title}</h2>
-        <p className="text-neutral-500 text-[10px] uppercase tracking-widest mt-1">{count} item{count !== 1 ? "s" : ""}</p>
+        <h2 className="text-white font-bold text-base sm:text-lg tracking-wide">{title}</h2>
+        <p className="text-neutral-500 text-[9px] uppercase tracking-widest mt-1">{count} item{count !== 1 ? "s" : ""}</p>
       </div>
       <button
         onClick={onAdd}
-        className="flex items-center gap-2 px-4 py-2.5 bg-[#2F4F2F] hover:bg-[#3F5F3F] rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all shadow-lg shadow-[#2F4F2F]/10"
+        className="flex items-center justify-center gap-1.5 px-4 py-3 sm:py-2.5 min-h-[44px] bg-[#2F4F2F] hover:bg-[#3F5F3F] rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold transition-all shadow-lg shadow-[#2F4F2F]/10 cursor-pointer text-white"
       >
         <Plus size={14} /> Add New
       </button>
@@ -945,29 +1089,56 @@ function SectionHeader({ title, count, onAdd }) {
   );
 }
 
-function FormCard({ title, children, onClose }) {
+function FormCard({ id, title, subtitle, isEditing, children, onClose }) {
+  useEffect(() => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [id]);
+
   return (
-    <div className="mt-5 bg-white/[0.03] border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+    <motion.div
+      id={id}
+      initial={{ opacity: 0, scale: 0.96, y: 15 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`mt-5 bg-white/[0.03] rounded-3xl p-5 sm:p-6 backdrop-blur-xl border transition-all duration-500 ${
+        isEditing 
+          ? "border-[#2F4F2F]/80 shadow-[0_0_25px_rgba(47,79,47,0.3)] bg-gradient-to-b from-[#2F4F2F]/5 to-transparent" 
+          : "border-white/10"
+      }`}
+    >
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-white font-semibold text-sm uppercase tracking-widest">{title}</h3>
-        <button onClick={onClose} className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-500 hover:text-white transition-all">
+        <div>
+          <h3 className="text-white font-bold text-xs sm:text-sm uppercase tracking-widest">
+            {isEditing ? `Editing ${title}` : `Add New ${title}`}
+          </h3>
+          {subtitle && (
+            <p className="text-[10px] text-neutral-500 font-semibold tracking-wide mt-1.5">
+              {subtitle}
+            </p>
+          )}
+        </div>
+        <button onClick={onClose} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-500 hover:text-white transition-all cursor-pointer">
           <X size={14} />
         </button>
       </div>
       {children}
-    </div>
+    </motion.div>
   );
 }
 
-function FormField({ label, value, onChange, required, isTextarea, placeholder, type = "text" }) {
-  const inputClasses = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors";
+const FormField = React.forwardRef(({ label, value, onChange, required, isTextarea, placeholder, type = "text" }, ref) => {
+  const inputClasses = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 sm:py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors";
   return (
     <div>
-      <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">
+      <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2 font-semibold">
         {label} {required && <span className="text-[#7A9E3A]">*</span>}
       </label>
       {isTextarea ? (
         <textarea
+          ref={ref}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={`${inputClasses} resize-none`}
@@ -977,6 +1148,7 @@ function FormField({ label, value, onChange, required, isTextarea, placeholder, 
         />
       ) : (
         <input
+          ref={ref}
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -987,23 +1159,24 @@ function FormField({ label, value, onChange, required, isTextarea, placeholder, 
       )}
     </div>
   );
-}
+});
+FormField.displayName = "FormField";
 
 function FormActions({ onCancel, label }) {
   return (
-    <div className="flex gap-3 pt-2">
+    <div className="flex flex-col sm:flex-row gap-3 pt-2 w-full">
       <button
         type="submit"
-        className="flex items-center gap-2 px-5 py-2.5 bg-[#2F4F2F] hover:bg-[#3F5F3F] rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all"
+        className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 px-5 py-3 bg-[#2F4F2F] hover:bg-[#3F5F3F] rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold transition-all text-white cursor-pointer shadow-lg shadow-[#2F4F2F]/10"
       >
-        <Save size={12} /> {label}
+        <Save size={14} /> {label}
       </button>
       <button
         type="button"
         onClick={onCancel}
-        className="flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] uppercase tracking-widest font-bold text-neutral-400 transition-all"
+        className="w-full sm:w-auto min-h-[44px] flex items-center justify-center gap-2 px-5 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold text-neutral-400 transition-all cursor-pointer"
       >
-        <X size={12} /> Cancel
+        <X size={14} /> Cancel
       </button>
     </div>
   );

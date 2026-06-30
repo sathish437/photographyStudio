@@ -26,15 +26,11 @@ public class ServiceItem {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ImageType imageType;
+    @Column(length = 1000)
+    private String imageUrl;
 
     @Column(length = 255)
-    private String imageName;
-
-    @Column(length = 500)
-    private String imagePath;
+    private String imagePublicId;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

@@ -1,6 +1,5 @@
 package com.example.photoStudio.dto;
 
-import com.example.photoStudio.entity.ImageType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -20,11 +19,9 @@ public class GalleryDTO {
 
     private String category;
 
-    private ImageType imageType;
+    private String imageUrl;
 
-    private String imageName;
-
-    private String imagePath;
+    private String imagePublicId;
 
     private String description;
 

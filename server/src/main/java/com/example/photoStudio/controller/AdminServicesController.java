@@ -26,10 +26,9 @@ public class AdminServicesController {
     public ResponseEntity<ServiceDTO> create(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @RequestParam(value = "image", required = false) MultipartFile image,
-            @RequestParam(value = "imageUrl", required = false) String imageUrl) {
+            @RequestParam("image") MultipartFile image) {
 
-        ServiceDTO created = serviceItemService.create(title, description, image, imageUrl);
+        ServiceDTO created = serviceItemService.create(title, description, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -38,10 +37,9 @@ public class AdminServicesController {
             @PathVariable Long id,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @RequestParam(value = "image", required = false) MultipartFile image,
-            @RequestParam(value = "imageUrl", required = false) String imageUrl) {
+            @RequestParam(value = "image", required = false) MultipartFile image) {
 
-        ServiceDTO updated = serviceItemService.update(id, title, description, image, imageUrl);
+        ServiceDTO updated = serviceItemService.update(id, title, description, image);
         return ResponseEntity.ok(updated);
     }
 
