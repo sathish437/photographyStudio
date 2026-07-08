@@ -36,6 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll()
                         // Public uploaded images access
                         .requestMatchers("/uploads/**").permitAll()
+                        // Public access to error page
+                        .requestMatchers("/error").permitAll()
                         // Admin auth endpoint — no auth required
                         .requestMatchers("/api/admin/auth/**").permitAll()
                         // Allow CORS preflight requests

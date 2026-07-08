@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authApi, adminServicesApi, adminGalleryApi, adminContactApi, BASE_URL } from "../api/api";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 
 // =====================================================
 // ADMIN PANEL — Full CMS for Photography Studio
@@ -210,15 +211,15 @@ function NotificationCard({ type, message, onClose }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 4000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
 
   const styleMap = {
     success: {
-      bg: "bg-emerald-950/90 border-emerald-500/30 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.1)]",
-      icon: <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />,
-      accent: "bg-emerald-500",
+      bg: "bg-[#162516]/90 border-[#2F4F2F]/40 text-[#A3C380] shadow-[0_0_20px_rgba(47,79,47,0.2)]",
+      icon: <CheckCircle2 className="w-4 h-4 text-[#7A9E3A] flex-shrink-0" />,
+      accent: "bg-[#7A9E3A]",
     },
     error: {
       bg: "bg-red-950/90 border-red-500/30 text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.1)]",
@@ -364,6 +365,8 @@ function ServicesManager({ onNotify }) {
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const fetchServices = async () => {
     try {
@@ -397,14 +400,20 @@ function ServicesManager({ onNotify }) {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this service?")) return;
+  const handleDelete = (service) => {
+    setDeleteConfirmItem(service);
+  };
+
+  const performDelete = async (id) => {
+    setDeletingId(id);
     try {
       await adminServicesApi.delete(id);
       onNotify("success", "Service deleted successfully.");
       fetchServices();
     } catch (err) {
       onNotify("error", "Failed to delete service");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -416,6 +425,7 @@ function ServicesManager({ onNotify }) {
         title="Services"
         count={services.length}
         onAdd={() => { setEditingItem(null); setShowForm(true); }}
+        disabled={deletingId !== null}
       />
 
       {showForm && (
@@ -465,19 +475,32 @@ function ServicesManager({ onNotify }) {
             {/* Actions */}
             <div className="p-5 pt-0 flex gap-2 w-full">
               <button
+                type="button"
                 onClick={() => { 
                   setEditingItem(service); 
                   setShowForm(true); 
                 }}
-                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[10px] uppercase tracking-widest font-bold transition-all"
+                disabled={deletingId !== null}
+                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[10px] uppercase tracking-widest font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Pencil size={12} /> Edit
               </button>
               <button
-                onClick={() => handleDelete(service.id)}
-                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] uppercase tracking-widest font-bold transition-all"
+                type="button"
+                onClick={() => handleDelete(service)}
+                disabled={deletingId !== null}
+                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] uppercase tracking-widest font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Trash2 size={12} /> Delete
+                {deletingId === service.id ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={12} /> Delete
+                  </>
+                )}
               </button>
             </div>
           </motion.div>
@@ -485,6 +508,19 @@ function ServicesManager({ onNotify }) {
       </div>
 
       {services.length === 0 && <EmptyState label="services" />}
+
+      <DeleteConfirmationModal
+        isOpen={deleteConfirmItem !== null}
+        onClose={() => setDeleteConfirmItem(null)}
+        onConfirm={() => {
+          if (deleteConfirmItem) {
+            const id = deleteConfirmItem.id;
+            setDeleteConfirmItem(null);
+            performDelete(id);
+          }
+        }}
+        isDeleting={false}
+      />
     </div>
   );
 }
@@ -575,6 +611,8 @@ function GalleryManager({ onNotify }) {
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const fetchGallery = async () => {
     try {
@@ -608,14 +646,20 @@ function GalleryManager({ onNotify }) {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this gallery item?")) return;
+  const handleDelete = (item) => {
+    setDeleteConfirmItem(item);
+  };
+
+  const performDelete = async (id) => {
+    setDeletingId(id);
     try {
       await adminGalleryApi.delete(id);
       onNotify("success", "Gallery item deleted successfully.");
       fetchGallery();
     } catch (err) {
       onNotify("error", "Failed to delete gallery item");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -627,6 +671,7 @@ function GalleryManager({ onNotify }) {
         title="Gallery"
         count={gallery.length}
         onAdd={() => { setEditingItem(null); setShowForm(true); }}
+        disabled={deletingId !== null}
       />
 
       {showForm && (
@@ -673,19 +718,32 @@ function GalleryManager({ onNotify }) {
               </div>
               <div className="flex gap-2 mt-4">
                 <button
+                  type="button"
                   onClick={() => { 
                     setEditingItem(item); 
                     setShowForm(true); 
                   }}
-                  className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[9px] uppercase tracking-wider font-bold transition-all"
+                  disabled={deletingId !== null}
+                  className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[9px] uppercase tracking-wider font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Pencil size={11} /> Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(item.id)}
-                  className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[9px] uppercase tracking-wider font-bold transition-all"
+                  type="button"
+                  onClick={() => handleDelete(item)}
+                  disabled={deletingId !== null}
+                  className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[9px] uppercase tracking-wider font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Trash2 size={11} /> Delete
+                  {deletingId === item.id ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={11} /> Delete
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -694,6 +752,19 @@ function GalleryManager({ onNotify }) {
       </div>
 
       {gallery.length === 0 && <EmptyState label="gallery items" />}
+
+      <DeleteConfirmationModal
+        isOpen={deleteConfirmItem !== null}
+        onClose={() => setDeleteConfirmItem(null)}
+        onConfirm={() => {
+          if (deleteConfirmItem) {
+            const id = deleteConfirmItem.id;
+            setDeleteConfirmItem(null);
+            performDelete(id);
+          }
+        }}
+        isDeleting={false}
+      />
     </div>
   );
 }
@@ -1072,7 +1143,7 @@ function ContactManager({ onNotify }) {
 // SHARED UI COMPONENTS
 // =====================================================
 
-function SectionHeader({ title, count, onAdd }) {
+function SectionHeader({ title, count, onAdd, disabled }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <div>
@@ -1081,7 +1152,8 @@ function SectionHeader({ title, count, onAdd }) {
       </div>
       <button
         onClick={onAdd}
-        className="flex items-center justify-center gap-1.5 px-4 py-3 sm:py-2.5 min-h-[44px] bg-[#2F4F2F] hover:bg-[#3F5F3F] rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold transition-all shadow-lg shadow-[#2F4F2F]/10 cursor-pointer text-white"
+        disabled={disabled}
+        className="flex items-center justify-center gap-1.5 px-4 py-3 sm:py-2.5 min-h-[44px] bg-[#2F4F2F] hover:bg-[#3F5F3F] rounded-xl text-xs sm:text-[10px] uppercase tracking-widest font-bold transition-all shadow-lg shadow-[#2F4F2F]/10 cursor-pointer text-white disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Plus size={14} /> Add New
       </button>
