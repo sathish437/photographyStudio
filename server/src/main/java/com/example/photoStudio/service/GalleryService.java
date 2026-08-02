@@ -8,6 +8,8 @@ import com.example.photoStudio.mapper.GalleryMapper;
 import com.example.photoStudio.repository.GalleryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,9 +27,10 @@ public class GalleryService {
     private final GalleryRepository galleryRepository;
     private final CloudinaryService cloudinaryService;
 
+    @Cacheable(value = "publicGallery")
     public List<GalleryDTO> getAll() {
         log.info("Fetching all gallery items from database");
-        return galleryRepository.findAll()
+        return galleryRepository.findAllByOrderByIdAsc()
                 .stream()
                 .map(GalleryMapper::toDTO)
                 .collect(Collectors.toList());
@@ -44,6 +47,7 @@ public class GalleryService {
     }
 
     @Transactional
+    @CacheEvict(value = "publicGallery", allEntries = true)
     public GalleryDTO create(String title, String category, String description, MultipartFile image) {
         if (image == null || image.isEmpty()) {
             log.error("Image upload failed: MultipartFile is null or empty");
@@ -74,6 +78,7 @@ public class GalleryService {
     }
 
     @Transactional
+    @CacheEvict(value = "publicGallery", allEntries = true)
     public GalleryDTO update(Long id, String title, String category, String description, MultipartFile image) {
         log.info("Updating gallery item with ID: {}", id);
         GalleryItem item = galleryRepository.findById(id)
@@ -115,6 +120,7 @@ public class GalleryService {
     }
 
     @Transactional
+    @CacheEvict(value = "publicGallery", allEntries = true)
     public void delete(Long id) {
         log.info("Deleting gallery item with ID: {}", id);
         GalleryItem item = galleryRepository.findById(id)

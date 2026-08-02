@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 
-export default function Gallery({ photos }) {
+function Gallery({ photos }) {
   const [activePhotoIdx, setActivePhotoIdx] = useState(null);
 
   // Handle keyboard navigation for lightbox
@@ -58,18 +59,17 @@ export default function Gallery({ photos }) {
 
         {/* Pinterest-Style Masonry Grid */}
         <motion.div
-          layout
           className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6"
         >
           <AnimatePresence mode="popLayout">
             {photos.map((photo, index) => (
               <motion.div
                 key={photo.id}
-                layout
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => setActivePhotoIdx(index)}
                 className="break-inside-avoid relative rounded-3xl overflow-hidden group bg-neutral-900 border border-neutral-200/20 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
               >
@@ -77,9 +77,11 @@ export default function Gallery({ photos }) {
                 <motion.img
                   whileHover={{ scale: 1.04 }}
                   transition={{ duration: 0.8 }}
-                  src={photo.url}
+                  src={getOptimizedImageUrl(photo.url, 800)}
                   alt={photo.title}
-                  className="w-full h-auto object-cover block"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-auto object-cover block min-h-[150px]"
                 />
 
                 {/* Hover Details Panel */}
@@ -175,7 +177,7 @@ export default function Gallery({ photos }) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  src={photos[activePhotoIdx].url}
+                  src={getOptimizedImageUrl(photos[activePhotoIdx].url, 1600)}
                   alt={photos[activePhotoIdx].title}
                   className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl select-none"
                   onClick={(e) => e.stopPropagation()}
@@ -207,3 +209,5 @@ export default function Gallery({ photos }) {
     </section>
   );
 }
+
+export default memo(Gallery);

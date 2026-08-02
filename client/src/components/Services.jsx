@@ -1,7 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 import { motion } from "framer-motion";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 
-export default function Services({ services = [] }) {
+function Services({ services = [] }) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -64,8 +65,10 @@ export default function Services({ services = [] }) {
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8 }}
-                  src={service.imageUrl}
+                  src={getOptimizedImageUrl(service.imageUrl, 600)}
                   alt={service.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -89,3 +92,5 @@ export default function Services({ services = [] }) {
     </section>
   );
 }
+
+export default memo(Services);

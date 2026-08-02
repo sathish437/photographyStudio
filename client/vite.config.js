@@ -8,6 +8,19 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('framer-motion')) return 'framer';
+            if (id.includes('lucide-react')) return 'lucide';
+            if (id.includes('react') || id.includes('axios')) return 'vendor';
+          }
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api': {

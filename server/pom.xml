@@ -43,6 +43,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- Spring Cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
 		<!-- PostgreSQL JDBC Driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -83,6 +89,13 @@
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http5</artifactId>
 			<version>2.4.0</version>
+		</dependency>
+
+		<!-- Dotenv Java (.env file support) -->
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 
 		<!-- Test -->

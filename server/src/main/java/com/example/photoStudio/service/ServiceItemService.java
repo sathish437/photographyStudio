@@ -7,6 +7,8 @@ import com.example.photoStudio.exception.ResourceNotFoundException;
 import com.example.photoStudio.mapper.ServiceMapper;
 import com.example.photoStudio.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,8 +25,9 @@ public class ServiceItemService {
     private final ServiceRepository serviceRepository;
     private final CloudinaryService cloudinaryService;
 
+    @Cacheable(value = "publicServices")
     public List<ServiceDTO> getAll() {
-        return serviceRepository.findAll()
+        return serviceRepository.findAllByOrderByIdAsc()
                 .stream()
                 .map(ServiceMapper::toDTO)
                 .collect(Collectors.toList());
@@ -37,6 +40,7 @@ public class ServiceItemService {
     }
 
     @Transactional
+    @CacheEvict(value = "publicServices", allEntries = true)
     public ServiceDTO create(String title, String description, MultipartFile image) {
         if (image == null || image.isEmpty()) {
             throw new InvalidFileException("Image file is required.");
@@ -56,6 +60,7 @@ public class ServiceItemService {
     }
 
     @Transactional
+    @CacheEvict(value = "publicServices", allEntries = true)
     public ServiceDTO update(Long id, String title, String description, MultipartFile image) {
         ServiceItem item = serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service", id));
@@ -82,6 +87,7 @@ public class ServiceItemService {
     }
 
     @Transactional
+    @CacheEvict(value = "publicServices", allEntries = true)
     public void delete(Long id) {
         ServiceItem item = serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service", id));

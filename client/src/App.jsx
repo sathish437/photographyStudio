@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { publicApi, BASE_URL } from "./api/api";
+import { publicApi } from "./api/api";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -10,7 +10,17 @@ import Services from "./components/Services";
 import Gallery from "./components/Gallery";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import AdminPanel from "./pages/AdminPanel";
+
+// Code splitting for Admin Panel
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+
+function PageLoading() {
+  return (
+    <div className="min-h-screen bg-[#0F0F0F] flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-[#2F4F2F] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 // Landing page (public website)
 function LandingPage() {
@@ -19,16 +29,18 @@ function LandingPage() {
   const [photos, setPhotos] = useState([]);
   const [contactInfo, setContactInfo] = useState(null);
 
-  // Fetch live data from public API
+  // Fetch live data from public API in parallel
   useEffect(() => {
-    publicApi.getServices()
-      .then((res) => setServices(res.data))
-      .catch((err) => console.error("Failed to load services:", err));
-
-    publicApi.getGallery()
-      .then((res) => {
-        // Map backend fields to match Gallery component expectations
-        const mapped = res.data.map((item) => ({
+    Promise.allSettled([
+      publicApi.getServices(),
+      publicApi.getGallery(),
+      publicApi.getContact()
+    ]).then(([servicesRes, galleryRes, contactRes]) => {
+      if (servicesRes.status === "fulfilled") {
+        setServices(servicesRes.value.data);
+      }
+      if (galleryRes.status === "fulfilled") {
+        const mapped = galleryRes.value.data.map((item) => ({
           id: item.id,
           url: item.imageUrl,
           title: item.title,
@@ -36,16 +48,11 @@ function LandingPage() {
           albumName: item.description || "",
         }));
         setPhotos(mapped);
-      })
-      .catch((err) => console.error("Failed to load gallery:", err));
-
-    publicApi.getContact()
-      .then((res) => {
-        if (res.data.length > 0) {
-          setContactInfo(res.data[0]);
-        }
-      })
-      .catch((err) => console.error("Failed to load contact:", err));
+      }
+      if (contactRes.status === "fulfilled" && contactRes.value.data.length > 0) {
+        setContactInfo(contactRes.value.data[0]);
+      }
+    });
   }, []);
 
   // IntersectionObserver to detect active viewport section
@@ -123,7 +130,14 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/admin" element={<AdminPanel />} />
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={<PageLoading />}>
+              <AdminPanel />
+            </Suspense>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

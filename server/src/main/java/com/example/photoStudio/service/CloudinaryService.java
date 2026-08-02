@@ -51,7 +51,11 @@ public class CloudinaryService {
         validateFile(file);
         try {
             log.info("Starting Cloudinary upload for file: {} with public_id: {}", file.getOriginalFilename(), publicId);
-            Map<?, ?> options = ObjectUtils.asMap("public_id", publicId);
+            Map<?, ?> options = ObjectUtils.asMap(
+                    "public_id", publicId,
+                    "quality", "auto",
+                    "fetch_format", "auto"
+            );
             Map<?, ?> result = cloudinary.uploader().upload(file.getBytes(), options);
             log.info("Cloudinary upload successful for file: {}. public_id: {}, url: {}", 
                      file.getOriginalFilename(), result.get("public_id"), result.get("secure_url"));
@@ -64,6 +68,7 @@ public class CloudinaryService {
 
     /**
      * Returns the secure image URL from the upload result map.
+     * Appends auto format and quality transformations if needed.
      * @param uploadResult the raw Cloudinary upload result map
      * @return the secure URL
      */
@@ -71,7 +76,11 @@ public class CloudinaryService {
         if (uploadResult == null) {
             return null;
         }
-        return (String) uploadResult.get("secure_url");
+        String url = (String) uploadResult.get("secure_url");
+        if (url != null && url.contains("/upload/") && !url.contains("/f_auto,q_auto/")) {
+            return url.replace("/upload/", "/upload/f_auto,q_auto/");
+        }
+        return url;
     }
 
     /**

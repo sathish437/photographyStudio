@@ -6,17 +6,22 @@ import com.example.photoStudio.exception.ResourceNotFoundException;
 import com.example.photoStudio.mapper.ContactMapper;
 import com.example.photoStudio.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ContactService {
 
     private final ContactRepository contactRepository;
 
+    @Cacheable(value = "publicContact")
     public List<ContactDTO> getAll() {
         return contactRepository.findAll()
                 .stream()
@@ -30,6 +35,8 @@ public class ContactService {
         return ContactMapper.toDTO(contact);
     }
 
+    @Transactional
+    @CacheEvict(value = "publicContact", allEntries = true)
     public ContactDTO update(Long id, ContactDTO dto) {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact", id));

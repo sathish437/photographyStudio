@@ -1,8 +1,8 @@
 package com.example.photoStudio.security;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -21,6 +21,14 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private long expiration;
+
+    private SecretKey cachedKey;
+
+    @PostConstruct
+    public void init() {
+        byte[] keyBytes = secret.getBytes();
+        this.cachedKey = Keys.hmacShaKeyFor(keyBytes);
+    }
 
     /**
      * Generate a JWT token for the given user details.
@@ -77,8 +85,6 @@ public class JwtUtil {
     }
 
     private SecretKey getSigningKey() {
-        // Use the secret directly as bytes for HMAC signing
-        byte[] keyBytes = secret.getBytes();
-        return Keys.hmacShaKeyFor(keyBytes);
+        return cachedKey;
     }
 }

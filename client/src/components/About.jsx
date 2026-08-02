@@ -1,8 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import { Camera, Eye, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 
-export default function About() {
+function About() {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -59,8 +60,10 @@ export default function About() {
             <motion.img
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 1.5 }}
-              src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop"
+              src={getOptimizedImageUrl("https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop", 800)}
               alt="Artistic Director Aravinth Karuppiah"
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
@@ -160,3 +163,5 @@ export default function About() {
     </section>
   );
 }
+
+export default memo(About);

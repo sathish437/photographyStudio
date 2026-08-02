@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Camera, Sliders, Image, Zap, Award, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { whyChooseUs } from "../data/mockData";
@@ -12,7 +12,7 @@ const iconMap = {
   Users: <Users className="w-6 h-6 text-[#2F4F2F]" />
 };
 
-export default function WhyChooseUs() {
+function WhyChooseUs() {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -44,14 +44,14 @@ export default function WhyChooseUs() {
         >
           <div>
             <span className="text-[10px] uppercase tracking-[0.4em] font-semibold text-[#2F4F2F]">
-              Our Core Strengths
+              Our Difference
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-normal text-neutral-800 mt-2">
               Why <span className="italic font-light">Choose Us</span>
             </h2>
           </div>
           <p className="text-xs text-neutral-500 font-medium max-w-sm mt-4 md:mt-0 tracking-wide font-sans">
-            Crafting premium visual memoirs and fine-art digital archives with an uncompromising focus on quality.
+            Meticulous craft, high-end optics, and personalized luxury experience from concept to print.
           </p>
         </motion.div>
 
@@ -71,8 +71,8 @@ export default function WhyChooseUs() {
               className="group relative rounded-3xl p-8 bg-[#F7F8F5] border border-neutral-200/40 hover:border-[#2F4F2F]/20 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between"
             >
               <div className="space-y-4">
-                {/* Icon Wrapper */}
-                <div className="p-3 bg-white border border-neutral-200/50 rounded-2xl w-fit group-hover:bg-[#2F4F2F] group-hover:text-white transition-colors duration-500">
+                {/* Icon Circle */}
+                <div className="w-14 h-14 rounded-2xl bg-white border border-neutral-200/50 flex items-center justify-center shadow-sm group-hover:bg-[#2F4F2F] group-hover:border-[#2F4F2F] transition-all duration-500">
                   {React.cloneElement(iconMap[item.iconName] || <Camera />, {
                     className: "w-6 h-6 text-[#2F4F2F] group-hover:text-white transition-colors duration-500"
                   })}
@@ -96,3 +96,5 @@ export default function WhyChooseUs() {
     </section>
   );
 }
+
+export default memo(WhyChooseUs);

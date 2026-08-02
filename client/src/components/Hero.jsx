@@ -1,8 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import { ArrowDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 
-export default function Hero() {
+function Hero() {
   const { scrollY } = useScroll();
   
   // Parallax transform bindings
@@ -57,8 +58,10 @@ export default function Hero() {
         className="absolute inset-0 z-0 select-none pointer-events-none scale-110"
       >
         <img
-          src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop"
+          src={getOptimizedImageUrl("https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop", 1600)}
           alt="Luxury Photography Background"
+          loading="eager"
+          decoding="async"
           className="w-full h-full object-cover object-center opacity-55"
         />
         {/* Soft Dark Olive-toned Vignette Overlay */}
@@ -183,3 +186,5 @@ export default function Hero() {
     </section>
   );
 }
+
+export default memo(Hero);

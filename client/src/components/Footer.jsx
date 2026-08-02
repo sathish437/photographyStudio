@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 import { ArrowUp, Instagram, Youtube, MapPin } from "lucide-react";
 import logo from "../assets/logo.png";
 
-export default function Footer({ contactInfo }) {
+function Footer({ contactInfo }) {
   const scrollToTop = (e) => {
     e.preventDefault();
     window.scrollTo({
@@ -122,3 +122,5 @@ export default function Footer({ contactInfo }) {
     </footer>
   );
 }
+
+export default memo(Footer);
