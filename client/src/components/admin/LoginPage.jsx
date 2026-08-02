@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, Lock } from "lucide-react";
 import { authApi } from "../../api/api";
 
 export default function LoginPage({ onLogin }) {
@@ -25,46 +25,58 @@ export default function LoginPage({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0F0F0F] flex items-center justify-center px-4 py-12 font-sans">
       <div className="w-full max-w-sm">
         {/* Branding */}
-        <div className="text-center mb-10">
-          <div className="w-14 h-14 bg-gradient-to-br from-[#2F4F2F] to-[#5A8A5A] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#2F4F2F]/20">
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 bg-gradient-to-br from-[#2F4F2F] to-[#5A8A5A] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#2F4F2F]/30">
             <Camera size={26} className="text-white" />
           </div>
-          <h1 className="text-white text-xl font-bold tracking-wide">Aravinth Photography</h1>
-          <p className="text-neutral-500 text-[10px] uppercase tracking-[0.4em] mt-2">CMS Admin Panel</p>
+          <h1 className="text-white font-serif text-2xl font-normal tracking-wide">Aravinth Photography</h1>
+          <p className="text-neutral-500 text-[10px] font-sans uppercase tracking-[0.3em] font-semibold mt-1">
+            CMS Admin Control Panel
+          </p>
         </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="bg-white/[0.03] border border-white/5 rounded-3xl p-8 backdrop-blur-xl">
-          <h2 className="text-white font-semibold text-sm mb-6 uppercase tracking-widest">Sign In</h2>
+        {/* Login Form Card */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-6"
+        >
+          <div className="flex items-center justify-between border-b border-white/5 pb-4">
+            <h2 className="text-white font-serif text-lg font-normal tracking-wide">Sign In</h2>
+            <Lock size={16} className="text-[#7A9E3A]" />
+          </div>
 
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+            <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs font-sans font-medium leading-relaxed">
               {error}
             </div>
           )}
 
           <div className="space-y-4">
-            <div>
-              <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">Username</label>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase font-sans font-bold tracking-[0.2em] text-neutral-400 block">
+                Username
+              </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-sans placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] focus:ring-2 focus:ring-[#2F4F2F]/20 transition-all"
                 placeholder="Enter username"
                 required
               />
             </div>
-            <div>
-              <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2">Password</label>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase font-sans font-bold tracking-[0.2em] text-neutral-400 block">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-sans placeholder:text-neutral-600 focus:outline-none focus:border-[#2F4F2F] focus:ring-2 focus:ring-[#2F4F2F]/20 transition-all"
                 placeholder="Enter password"
                 required
               />
@@ -74,14 +86,14 @@ export default function LoginPage({ onLogin }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 py-3.5 bg-gradient-to-r from-[#2F4F2F] to-[#3F6F3F] hover:from-[#3F5F3F] hover:to-[#4F7F4F] text-white text-xs font-bold uppercase tracking-[0.2em] rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-[#2F4F2F]/20"
+            className="w-full h-12 bg-gradient-to-r from-[#2F4F2F] to-[#3F6F3F] hover:from-[#3F5F3F] hover:to-[#4F7F4F] text-white text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.2em] rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg shadow-[#2F4F2F]/20 active:scale-98 cursor-pointer"
           >
-            {loading ? "Authenticating..." : "Sign In"}
+            {loading ? "Authenticating..." : "Sign In to CMS"}
           </button>
         </form>
 
-        <p className="text-center text-neutral-600 text-[10px] mt-6 tracking-wide">
-          Protected admin access only
+        <p className="text-center text-neutral-600 text-[10px] font-sans uppercase tracking-widest mt-6">
+          Protected Administrative Portal
         </p>
       </div>
     </div>

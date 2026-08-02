@@ -8,7 +8,7 @@ function About() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.2 }
+      transition: { staggerChildren: 0.15 }
     }
   };
 
@@ -17,31 +17,31 @@ function About() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
     }
   };
 
   return (
-    <section id="about" className="py-14 bg-[#F7F8F1] border-b border-neutral-200/30 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="about" className="py-16 md:py-24 bg-[#F7F8F1] border-b border-neutral-200/30 overflow-hidden font-sans">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
         
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-10"
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16"
         >
           <div>
-            <span className="text-[10px] uppercase tracking-[0.4em] font-semibold text-[#2F4F2F]">
+            <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] font-bold text-[#2F4F2F]">
               Studio Origin
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-normal text-neutral-800 mt-2">
               Behind the <span className="italic font-light">Lens</span>
             </h2>
           </div>
-          <p className="text-xs text-neutral-500 font-medium max-w-sm mt-4 md:mt-0 tracking-wide font-sans">
+          <p className="text-xs md:text-sm text-neutral-500 font-normal max-w-sm mt-4 md:mt-0 tracking-wide font-sans leading-relaxed">
             Capturing the organic textures of light, space, and human connections since 2016.
           </p>
         </motion.div>
@@ -51,40 +51,40 @@ function About() {
           
           {/* Studio Image Frame (Left Column) */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-neutral-200/40 relative bg-neutral-900 group"
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-neutral-200/50 relative bg-neutral-900 group"
           >
             <motion.img
               whileHover={{ scale: 1.05 }}
-              transition={{ duration: 1.5 }}
+              transition={{ duration: 0.8 }}
               src={getOptimizedImageUrl("https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop", 800)}
               alt="Artistic Director Aravinth Karuppiah"
               loading="lazy"
               decoding="async"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
           </motion.div>
 
           {/* About Content (Right Column) */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-7 space-y-8"
           >
             <div className="space-y-4">
-              <span className="text-[10px] uppercase tracking-widest font-bold text-[#2F4F2F]">
-                Professional Photography Studio
+              <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#2F4F2F]">
+                Professional Photography Atelier
               </span>
               <h3 className="font-serif text-3xl md:text-4xl font-normal text-neutral-800 leading-snug">
                 Capturing <span className="italic font-light text-[#2F4F2F]">beautiful moments</span> in timeless visual chapters.
               </h3>
-              <p className="text-neutral-600 text-sm leading-relaxed font-light">
+              <p className="text-neutral-600 text-sm md:text-base leading-relaxed font-light font-sans">
                 At Aravinth Photography, we believe every frame holds a unique legacy. Based in Chennai, India, our creative studio combines classic editorial composition with natural, organic photojournalism to capture couples, newborns, and milestone events in their purest, most authentic state.
               </p>
             </div>
@@ -94,23 +94,23 @@ function About() {
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-neutral-200/50"
+              viewport={{ once: true, margin: "-40px" }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-neutral-200/50"
             >
               
               {/* Creative Vision card */}
               <motion.div
                 variants={cardVariants}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="p-5 rounded-2xl bg-white border border-neutral-200/60 shadow-sm hover:shadow-md transition-all duration-300"
+                whileHover={{ y: -6, scale: 1.02 }}
+                className="p-6 rounded-2xl bg-white border border-neutral-200/50 hover:border-[#2F4F2F]/30 shadow-sm hover:shadow-xl transition-all duration-300"
               >
-                <div className="p-2.5 bg-[#2F4F2F]/5 rounded-xl text-[#2F4F2F] w-fit mb-4">
-                  <Eye size={16} />
+                <div className="p-2.5 bg-[#2F4F2F]/10 rounded-xl text-[#2F4F2F] w-fit mb-4">
+                  <Eye size={20} />
                 </div>
-                <h4 className="font-serif text-lg font-normal text-neutral-800">
+                <h4 className="font-serif text-xl font-normal text-neutral-800">
                   Creative Vision
                 </h4>
-                <p className="text-[10px] text-neutral-400 font-semibold tracking-wider uppercase mt-1">
+                <p className="text-[10px] text-neutral-400 font-bold tracking-[0.2em] uppercase mt-1">
                   Artistic Focus
                 </p>
               </motion.div>
@@ -118,16 +118,16 @@ function About() {
               {/* Professional Philosophy card */}
               <motion.div
                 variants={cardVariants}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="p-5 rounded-2xl bg-white border border-neutral-200/60 shadow-sm hover:shadow-md transition-all duration-300"
+                whileHover={{ y: -6, scale: 1.02 }}
+                className="p-6 rounded-2xl bg-white border border-neutral-200/50 hover:border-[#2F4F2F]/30 shadow-sm hover:shadow-xl transition-all duration-300"
               >
-                <div className="p-2.5 bg-[#2F4F2F]/5 rounded-xl text-[#2F4F2F] w-fit mb-4">
-                  <Heart size={16} />
+                <div className="p-2.5 bg-[#2F4F2F]/10 rounded-xl text-[#2F4F2F] w-fit mb-4">
+                  <Heart size={20} />
                 </div>
-                <h4 className="font-serif text-lg font-normal text-neutral-800">
+                <h4 className="font-serif text-xl font-normal text-neutral-800">
                   Philosophy
                 </h4>
-                <p className="text-[10px] text-neutral-400 font-semibold tracking-wider uppercase mt-1">
+                <p className="text-[10px] text-neutral-400 font-bold tracking-[0.2em] uppercase mt-1">
                   Authentic Light
                 </p>
               </motion.div>
@@ -135,23 +135,23 @@ function About() {
               {/* Modern Composition card */}
               <motion.div
                 variants={cardVariants}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="p-5 rounded-2xl bg-white border border-neutral-200/60 shadow-sm hover:shadow-md transition-all duration-300"
+                whileHover={{ y: -6, scale: 1.02 }}
+                className="p-6 rounded-2xl bg-white border border-neutral-200/50 hover:border-[#2F4F2F]/30 shadow-sm hover:shadow-xl transition-all duration-300"
               >
-                <div className="p-2.5 bg-[#2F4F2F]/5 rounded-xl text-[#2F4F2F] w-fit mb-4">
-                  <Camera size={16} />
+                <div className="p-2.5 bg-[#2F4F2F]/10 rounded-xl text-[#2F4F2F] w-fit mb-4">
+                  <Camera size={20} />
                 </div>
-                <h4 className="font-serif text-lg font-normal text-neutral-800">
+                <h4 className="font-serif text-xl font-normal text-neutral-800">
                   Composition
                 </h4>
-                <p className="text-[10px] text-neutral-400 font-semibold tracking-wider uppercase mt-1">
+                <p className="text-[10px] text-neutral-400 font-bold tracking-[0.2em] uppercase mt-1">
                   Modern Framing
                 </p>
               </motion.div>
 
             </motion.div>
 
-            <p className="text-neutral-500 italic text-xs tracking-wide">
+            <p className="text-neutral-500 italic font-serif text-sm tracking-wide border-l-2 border-[#2F4F2F]/40 pl-4 py-1">
               "We don't capture scenes; we document the raw, silent expressions that tell exactly who you are."
             </p>
 

@@ -66,7 +66,7 @@ export default function ServicesManager({ onNotify }) {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       <SectionHeader
         title="Services"
         count={services.length}
@@ -97,12 +97,12 @@ export default function ServicesManager({ onNotify }) {
           <motion.div
             key={service.id}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.3 }}
-            className="group bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden hover:border-[#2F4F2F]/30 transition-all flex flex-col justify-between"
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="group bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-[#2F4F2F]/40 shadow-xl transition-all duration-300 flex flex-col justify-between"
           >
             <div>
               {/* Image Banner */}
-              <div className="aspect-[16/10] w-full overflow-hidden bg-neutral-900 border-b border-white/5 relative">
+              <div className="aspect-[16/10] w-full overflow-hidden bg-neutral-900 border-b border-white/10 relative">
                 <img
                   src={getOptimizedImageUrl(service.imageUrl, 500)}
                   alt={service.title}
@@ -114,14 +114,18 @@ export default function ServicesManager({ onNotify }) {
               </div>
 
               {/* Card Body */}
-              <div className="p-5 space-y-2">
-                <h3 className="text-white font-bold text-sm tracking-wide group-hover:text-[#7A9E3A] transition-colors">{service.title}</h3>
-                <p className="text-neutral-400 text-xs leading-relaxed line-clamp-3">{service.description}</p>
+              <div className="p-6 space-y-2">
+                <h3 className="text-white font-serif text-xl font-normal tracking-wide group-hover:text-[#7A9E3A] transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-neutral-400 text-xs font-sans leading-relaxed line-clamp-3">
+                  {service.description}
+                </p>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="p-5 pt-0 flex gap-2 w-full">
+            <div className="p-6 pt-0 flex gap-3 w-full">
               <button
                 type="button"
                 onClick={() => { 
@@ -129,24 +133,24 @@ export default function ServicesManager({ onNotify }) {
                   setShowForm(true); 
                 }}
                 disabled={deletingId !== null}
-                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[10px] uppercase tracking-widest font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-xl bg-white/5 hover:bg-[#2F4F2F]/30 text-neutral-300 hover:text-white text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                <Pencil size={12} /> Edit
+                <Pencil size={14} /> Edit
               </button>
               <button
                 type="button"
                 onClick={() => handleDelete(service)}
                 disabled={deletingId !== null}
-                className="flex-1 min-h-[44px] flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] uppercase tracking-widest font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-xl bg-white/5 hover:bg-red-500/20 text-neutral-400 hover:text-red-400 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {deletingId === service.id ? (
                   <>
-                    <div className="w-3 h-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
                     <span>Deleting...</span>
                   </>
                 ) : (
                   <>
-                    <Trash2 size={12} /> Delete
+                    <Trash2 size={14} /> Delete
                   </>
                 )}
               </button>
@@ -204,16 +208,16 @@ function ServiceForm({ initial, onSave, onCancel, onNotify }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <FormField ref={firstInputRef} label="Title" value={title} onChange={setTitle} required placeholder="e.g. Wedding Photography" />
       <FormField label="Description" value={description} onChange={setDescription} isTextarea required placeholder="Enter service description..." />
       
       {/* Upload Dropzone */}
-      <div>
-        <label className="text-[10px] uppercase tracking-widest text-neutral-500 block mb-2 font-semibold">
+      <div className="space-y-2">
+        <label className="text-[10px] uppercase font-sans font-bold tracking-[0.2em] text-neutral-400 block">
           Service Image
         </label>
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-dashed border-white/10 hover:border-[#2F4F2F]/30 transition-colors flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer min-h-[200px]">
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-dashed border-white/10 hover:border-[#2F4F2F]/40 transition-colors flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer min-h-[200px]">
           <input
             type="file"
             accept="image/*"
@@ -229,17 +233,17 @@ function ServiceForm({ initial, onSave, onCancel, onNotify }) {
           {previewUrl ? (
             <div className="w-full relative aspect-[16/10] rounded-xl overflow-hidden border border-white/10">
               <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-xs font-semibold uppercase tracking-widest text-white z-20">
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-xs font-sans font-semibold uppercase tracking-widest text-white z-20">
                 Change Image
               </div>
             </div>
           ) : (
             <div className="py-8 flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 text-neutral-400 group-hover:text-white transition-colors">
-                <Camera size={20} />
+                <Camera size={22} />
               </div>
-              <p className="text-xs font-bold text-neutral-300">Click or tap to upload image</p>
-              <p className="text-[9px] text-neutral-500 mt-1.5 uppercase tracking-wider">PNG, JPG, JPEG, WEBP up to 10MB</p>
+              <p className="text-xs font-sans font-bold text-neutral-300">Click or tap to upload image</p>
+              <p className="text-[9px] font-sans text-neutral-500 mt-1.5 uppercase tracking-wider">PNG, JPG, JPEG, WEBP up to 30MB</p>
             </div>
           )}
         </div>
