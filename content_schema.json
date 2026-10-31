@@ -1,0 +1,350 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PhotographyStudioContentSchema",
+  "description": "Content schema for the photography studio portfolio template",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "business",
+    "theme",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Version of the content schema",
+      "maxLength": 10
+    },
+    "business": {
+      "type": "object",
+      "description": "Core business identity details",
+      "required": [
+        "name",
+        "tagline"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "tagline": {
+          "type": "string",
+          "maxLength": 200
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "description": "Color palette and typography for the studio website",
+      "required": [
+        "primaryColor",
+        "backgroundColor",
+        "textColor",
+        "fontFamily"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "primaryColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "secondaryColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "backgroundColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "textColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "fontFamily": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "description": "List of website sections in their display order",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "visible",
+          "content"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "hero",
+              "about",
+              "whyChooseUs",
+              "services",
+              "gallery",
+              "contact"
+            ]
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "content": {
+            "type": "object",
+            "description": "Section-specific content attributes",
+            "additionalProperties": false,
+            "properties": {
+              "eyebrow": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "heading": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "subheading": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "slogan": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "tagline": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "primaryButtonText": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "primaryButtonLink": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "secondaryButtonText": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "secondaryButtonLink": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "exploreButtonText": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "emptyStateMessage": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "backgroundImageUrl": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "studioImageUrl": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "imageAlt": {
+                "type": "string",
+                "maxLength": 150
+              },
+              "atelierBadge": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "mainHeading": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "story": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "quote": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "phone": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "whatsapp": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "email": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "instagram": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "youtube": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "workspaceImageUrl": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "workspaceBadge": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "workspaceTagline": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "founderName": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "addresses": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "maxLength": 300
+                }
+              },
+              "categories": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "string",
+                  "maxLength": 100
+                }
+              },
+              "values": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "subtitle",
+                    "icon"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "subtitle": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "icon": {
+                      "type": "string",
+                      "maxLength": 50
+                    }
+                  }
+                }
+              },
+              "features": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "description",
+                    "icon"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "description": {
+                      "type": "string",
+                      "maxLength": 500
+                    },
+                    "icon": {
+                      "type": "string",
+                      "maxLength": 50
+                    }
+                  }
+                }
+              },
+              "services": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "description"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    "description": {
+                      "type": "string",
+                      "maxLength": 600
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "maxLength": 500
+                    }
+                  }
+                }
+              },
+              "items": {
+                "type": "array",
+                "maxItems": 100,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "title",
+                    "category",
+                    "albumName"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    "category": {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    "albumName": {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "maxLength": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

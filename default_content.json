@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "1.0",
+  "business": {
+    "name": "Your Photography Studio",
+    "tagline": "Capturing Timeless Memories"
+  },
+  "theme": {
+    "primaryColor": "#2F4F2F",
+    "secondaryColor": "#7A9E3A",
+    "backgroundColor": "#F7F8F5",
+    "textColor": "#1F1F1F",
+    "fontFamily": "Plus Jakarta Sans, sans-serif"
+  },
+  "sections": [
+    {
+      "type": "hero",
+      "visible": true,
+      "content": {
+        "eyebrow": "Fine-Art Photography Studio",
+        "title": "Your Photography Studio",
+        "slogan": "Creating Your Memories",
+        "tagline": "Preserving your most precious legacies, milestones, and emotions in timeless, editorial-grade frames.",
+        "primaryButtonText": "View Gallery",
+        "primaryButtonLink": "#gallery",
+        "secondaryButtonText": "Contact Us",
+        "secondaryButtonLink": "#contact",
+        "backgroundImageUrl": ""
+      }
+    },
+    {
+      "type": "about",
+      "visible": true,
+      "content": {
+        "eyebrow": "Studio Origin",
+        "heading": "Behind the Lens",
+        "subheading": "Capturing the organic textures of light, space, and human connections.",
+        "studioImageUrl": "",
+        "imageAlt": "Lead Photographer Portrait",
+        "atelierBadge": "Professional Photography Atelier",
+        "mainHeading": "Capturing beautiful moments in timeless visual chapters.",
+        "story": "At our studio, we believe every frame holds a unique legacy. Our creative team combines classic editorial composition with natural, organic photojournalism to capture couples, families, and milestone events in their purest, most authentic state.",
+        "quote": "We don't capture scenes; we document the raw, silent expressions that tell exactly who you are.",
+        "values": [
+          {
+            "title": "Creative Vision",
+            "subtitle": "Artistic Focus",
+            "icon": "Eye"
+          },
+          {
+            "title": "Philosophy",
+            "subtitle": "Authentic Light",
+            "icon": "Heart"
+          },
+          {
+            "title": "Composition",
+            "subtitle": "Modern Framing",
+            "icon": "Camera"
+          }
+        ]
+      }
+    },
+    {
+      "type": "whyChooseUs",
+      "visible": true,
+      "content": {
+        "eyebrow": "Our Difference",
+        "heading": "Why Choose Us",
+        "subheading": "Meticulous craft, high-end optics, and personalized luxury experience from concept to print.",
+        "features": [
+          {
+            "title": "Professional Photography",
+            "description": "Equipped with state-of-the-art camera gear, lenses, and lighting configurations to guarantee stunning results.",
+            "icon": "Camera"
+          },
+          {
+            "title": "Creative Editing",
+            "description": "Every selected photograph goes through an editorial color correction process to achieve a moody, luxury signature look.",
+            "icon": "Sliders"
+          },
+          {
+            "title": "High Resolution Images",
+            "description": "We deliver full-size, uncompressed digital archives ready for canvas framing and editorial prints.",
+            "icon": "Image"
+          },
+          {
+            "title": "Fast Delivery",
+            "description": "Efficient post-processing pipelines that ensure your custom client gallery is delivered on schedule without quality loss.",
+            "icon": "Zap"
+          },
+          {
+            "title": "Premium Quality",
+            "description": "From session lighting set-ups to custom photo finishes, every detail is refined to achieve global design standards.",
+            "icon": "Award"
+          },
+          {
+            "title": "Experienced Team",
+            "description": "Our fine-art visual curators and framing specialists work seamlessly to bring your unique memory records to life.",
+            "icon": "Users"
+          }
+        ]
+      }
+    },
+    {
+      "type": "services",
+      "visible": true,
+      "content": {
+        "eyebrow": "Studio Curation",
+        "heading": "Our Services",
+        "subheading": "Explore our specialized professional photography offerings to document your precious milestones.",
+        "services": [
+          {
+            "title": "Wedding Photography",
+            "description": "Documenting your sacred promises and grand celebrations with an elegant, fine-art editorial perspective.",
+            "imageUrl": ""
+          },
+          {
+            "title": "Pre-Wedding Photography",
+            "description": "Capturing organic romance, soft frames, and candid emotions in dreamy golden hour locations.",
+            "imageUrl": ""
+          },
+          {
+            "title": "Birthday Photography",
+            "description": "Bright, energetic candid shots highlighting joy, laughter, and milestones of your loved ones.",
+            "imageUrl": ""
+          },
+          {
+            "title": "Baby Photography",
+            "description": "Artistic, gentle frames preserving the pure, sweet milestones of your baby's earliest chapters.",
+            "imageUrl": ""
+          },
+          {
+            "title": "Event Photography",
+            "description": "Professional coverage for corporate summits, visual galas, and high-profile private celebrations.",
+            "imageUrl": ""
+          }
+        ]
+      }
+    },
+    {
+      "type": "gallery",
+      "visible": true,
+      "content": {
+        "eyebrow": "Visual Archives",
+        "heading": "Portfolio Showcase",
+        "subheading": "Explore a curated fine-art masonry grid of our premium, high-resolution photographs.",
+        "exploreButtonText": "Explore Full Archives",
+        "emptyStateMessage": "No photographs found in the portfolio.",
+        "categories": [
+          "Wedding",
+          "Pre-Wedding",
+          "Birthday",
+          "Baby Shower",
+          "Engagement",
+          "Events"
+        ],
+        "items": [
+          {
+            "title": "Ceremonial Elegance",
+            "category": "Wedding",
+            "albumName": "Heritage Celebrations",
+            "imageUrl": ""
+          },
+          {
+            "title": "Golden Hour Stroll",
+            "category": "Pre-Wedding",
+            "albumName": "Lakeside Reverie",
+            "imageUrl": ""
+          },
+          {
+            "title": "Milestone Laughter",
+            "category": "Birthday",
+            "albumName": "Joyful Moments",
+            "imageUrl": ""
+          },
+          {
+            "title": "Sweet Beginnings",
+            "category": "Baby Shower",
+            "albumName": "Gentle Lullabies",
+            "imageUrl": ""
+          },
+          {
+            "title": "Promise of Forever",
+            "category": "Engagement",
+            "albumName": "Evening Glow",
+            "imageUrl": ""
+          },
+          {
+            "title": "Summit Keynote",
+            "category": "Events",
+            "albumName": "Annual Gala",
+            "imageUrl": ""
+          }
+        ]
+      }
+    },
+    {
+      "type": "contact",
+      "visible": true,
+      "content": {
+        "eyebrow": "Let's Co-create",
+        "heading": "Get in Touch",
+        "subheading": "Connect directly with our creative team to reserve dates or inquire about bespoke pricing.",
+        "phone": "+91 00000 00000",
+        "whatsapp": "+91 00000 00000",
+        "email": "contact@example.com",
+        "instagram": "https://instagram.com/yourstudio",
+        "youtube": "https://youtube.com/@yourstudio",
+        "addresses": [
+          "123 Studio Boulevard, Creative Arts District, City, State - 000000",
+          "45 Coastal Promenade, Seaside Quarter, City, State - 000000"
+        ],
+        "workspaceImageUrl": "",
+        "workspaceBadge": "Studio Workspace",
+        "workspaceTagline": "Visual Art Curation & Gear Layout",
+        "founderName": "Studio Founder"
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,34 @@
+{
+  "templateKey": "photography-portfolio",
+  "name": "Photography Portfolio",
+  "category": "Photography",
+  "version": "1.0.0",
+  "sourcePaths": [
+    "client/index.html",
+    "client/package.json",
+    "client/vite.config.js",
+    "client/public/favicon.svg",
+    "client/public/icons.svg",
+    "client/src/main.jsx",
+    "client/src/App.jsx",
+    "client/src/index.css",
+    "client/src/components/Navbar.jsx",
+    "client/src/components/Hero.jsx",
+    "client/src/components/About.jsx",
+    "client/src/components/WhyChooseUs.jsx",
+    "client/src/components/Services.jsx",
+    "client/src/components/Gallery.jsx",
+    "client/src/components/Contact.jsx",
+    "client/src/components/Footer.jsx",
+    "client/src/utils/imageUtils.js"
+  ],
+  "supportedSections": [
+    "hero",
+    "about",
+    "whyChooseUs",
+    "services",
+    "gallery",
+    "contact"
+  ]
+}
+
