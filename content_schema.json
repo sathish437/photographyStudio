@@ -87,9 +87,9 @@
             "enum": [
               "hero",
               "about",
-              "whyChooseUs",
-              "services",
               "gallery",
+              "services",
+              "whyChooseUs",
               "contact"
             ]
           },
