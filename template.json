@@ -1,13 +1,18 @@
 {
   "templateKey": "photography-portfolio",
   "name": "Photography Portfolio",
+  "description": "Fine-art photography studio portfolio website template",
   "category": "PHOTOGRAPHY_PORTFOLIO",
   "version": "1.0.0",
+  "framework": "react",
   "sourcePaths": [
-    "client/src/components",
-    "client/src/index.css",
-    "client/src/assets"
+    "client/src",
+    "client/public",
+    "client/index.html",
+    "client/package.json",
+    "client/vite.config.js"
   ],
+  "entryFile": "client/src/App.jsx",
   "supportedSections": [
     "hero",
     "about",
